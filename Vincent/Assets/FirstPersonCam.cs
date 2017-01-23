@@ -10,8 +10,7 @@ public class FirstPersonCam : MonoBehaviour
     public float minFov = 15f;
     public float maxFov = 90f;
     public float sensitivity = 10f;
-
-    private float zoomSpeed = 200.0f;
+    
 
     private float yaw = 0.0f;
     private float pitch = 0.0f;
@@ -24,7 +23,6 @@ public class FirstPersonCam : MonoBehaviour
     {
         if (Input.GetMouseButton(0))
         {
-
             yaw -= speedH * Input.GetAxis("Mouse X");
             pitch += speedV * Input.GetAxis("Mouse Y");
 
@@ -36,8 +34,6 @@ public class FirstPersonCam : MonoBehaviour
         fov -= Input.GetAxis("Mouse ScrollWheel") * sensitivity;
         fov = Mathf.Clamp(fov, minFov, maxFov);
         Camera.main.fieldOfView = fov;
-
-// oat scroll = Input.GetAxis("Mouse ScrollWheel");
- //    transform.Translate(0, scroll * zoomSpeed, scroll * zoomSpeed, Space.World);
+        
     }
 }
