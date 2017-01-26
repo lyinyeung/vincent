@@ -83,6 +83,7 @@
   <ItemGroup>
     <Compile Include="Assets\BillBoard.cs" />
     <Compile Include="Assets\FirstPersonCam.cs" />
+    <Compile Include="Assets\InfoCanvasScript.cs" />
     <Compile Include="Assets\LookAtObj.cs" />
     <Compile Include="Assets\ReverseNormals.cs" />
   </ItemGroup>

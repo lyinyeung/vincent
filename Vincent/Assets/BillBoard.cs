@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class BillBoard : MonoBehaviour {
-    
-    void Update()
+
+    public Transform target;
+
+    void Start()
     {
-        transform.LookAt(Camera.main.transform.position, -Vector3.up);
+        transform.LookAt(target);
+        transform.Rotate(180, 0, 0);
     }
 }
