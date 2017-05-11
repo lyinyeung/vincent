@@ -15,6 +15,8 @@ public class PinchZoom : MonoBehaviour
     // Update is called once per frame
     public float perspectiveZoomSpeed = 0.5f;        // The rate of change of the field of view in perspective mode.
     public float orthoZoomSpeed = 0.5f;        // The rate of change of the orthographic size in orthographic mode.
+    public float maxFov = 80f; //Max fov of camera
+    public float minFov = 30f; //Min fov of camera
 
 
     void Update()
@@ -49,8 +51,9 @@ public class PinchZoom : MonoBehaviour
             }
             else
             {
-                // Otherwise change the field of view based on the change in distance between the touches.
-                camera.fieldOfView += deltaMagnitudeDiff * perspectiveZoomSpeed;
+                // Otherwise change the field of view based on the change in distance between the touches, limited between minFov and maxFov
+                camera.fieldOfView = Mathf.Clamp(camera.fieldOfView + deltaMagnitudeDiff * perspectiveZoomSpeed, minFov, maxFov);
+               // camera.fieldOfView += deltaMagnitudeDiff * perspectiveZoomSpeed;
 
 
             }
