@@ -9,6 +9,7 @@ public class BillBoard : MonoBehaviour {
     void Start()
     {
         transform.LookAt(target);
-        transform.Rotate(180, 0, 0);
+        //transform.Rotate(180, 0, 0);
+        //transform.localScale = new Vector3(-1, -1, 1);
     }
 }
