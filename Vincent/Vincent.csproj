@@ -83,11 +83,15 @@
   <ItemGroup>
     <Compile Include="Assets\BillBoard.cs" />
     <Compile Include="Assets\CSVReader.cs" />
+    <Compile Include="Assets\DrawCircle.cs" />
     <Compile Include="Assets\FirstPersonCam.cs" />
     <Compile Include="Assets\GyroCamera.cs" />
     <Compile Include="Assets\InfoCanvasScript.cs" />
+    <Compile Include="Assets\InstantiateSphereGrid.cs" />
     <Compile Include="Assets\InstantiateStars.cs" />
     <Compile Include="Assets\LookAtObj.cs" />
+    <Compile Include="Assets\Octahedron Sphere\OctahedronSphereCreator.cs" />
+    <Compile Include="Assets\Octahedron Sphere\OctahedronSphereTester.cs" />
     <Compile Include="Assets\PinchZoom.cs" />
     <Compile Include="Assets\ReadDemo.cs" />
     <Compile Include="Assets\ReverseNormals.cs" />
