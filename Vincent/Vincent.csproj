@@ -95,6 +95,7 @@
     <Compile Include="Assets\PinchZoom.cs" />
     <Compile Include="Assets\ReadDemo.cs" />
     <Compile Include="Assets\ReverseNormals.cs" />
+    <Compile Include="Assets\SwitchBGmode.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\ExampleCSV.txt" />
