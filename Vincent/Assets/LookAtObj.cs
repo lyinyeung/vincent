@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class LookAtObj : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
+    public Transform target;
+
+    // Use this for initialization
+    void Start () {
+        this.gameObject.transform.LookAt(target);        
 		
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+	
 }

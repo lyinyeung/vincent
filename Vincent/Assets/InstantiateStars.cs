@@ -31,13 +31,13 @@ public class InstantiateStars : MonoBehaviour {
                 switch (i)
                 {
                     case 0:
-                        x = float.Parse(field);
+                        z = float.Parse(field);
                         break;
                     case 1:
                         y = float.Parse(field);
                         break;
                     case 2:
-                        z = float.Parse(field);
+                        x = float.Parse(field);
                         Instantiate(starPrefab, new Vector3(x, y, z), Quaternion.identity).LookAt(mainCamera);
                         break;
                     default:

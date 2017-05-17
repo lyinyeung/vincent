@@ -15,8 +15,8 @@ public class DrawCircle : MonoBehaviour
        // line.SetVertexCount(segments + 1);
         line.numPositions = segments + 1;
         line.useWorldSpace = false;
-        Material whiteDiffuseMat = new Material(Shader.Find("Unlit/Texture"));
-        line.material = whiteDiffuseMat;
+       // Material whiteDiffuseMat = new Material(Shader.Find("Unlit/Texture"));
+      //  line.material = whiteDiffuseMat;
         CreatePoints();
     }
 
