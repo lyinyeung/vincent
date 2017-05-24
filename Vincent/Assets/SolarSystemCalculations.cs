@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
+
 
 
 public class SolarSystemCalculations : MonoBehaviour {
@@ -22,7 +24,8 @@ public class SolarSystemCalculations : MonoBehaviour {
     // Use this for initialization
     void Start () {
 
-        int d = dayNumber(2012,5,21);
+        double d = dayNumber(2012,5,20,23.8);
+        Debug.Log(System.DateTime.UtcNow.TimeOfDay.TotalHours);
         Sun sun = new Sun(d);
         Moon moon = new Moon(d);
 
@@ -102,7 +105,7 @@ public class SolarSystemCalculations : MonoBehaviour {
          260.2471, 0.005995147,
          sun,
          d);
-        t.text = (sun.coords.ra).ToString();
+       // t.text = (sun.coords.ra).ToString();
 
         for (int i = 0; i < 8; i++)
         {
@@ -128,8 +131,7 @@ public class SolarSystemCalculations : MonoBehaviour {
         saturnObj.transform.LookAt(mainCam);
         uranusObj.transform.LookAt(mainCam);
         neptuneObj.transform.LookAt(mainCam);
-
-        Debug.Log(sun.coords.ra.ToString());
+        
 
     }
 
@@ -156,7 +158,7 @@ public class SolarSystemCalculations : MonoBehaviour {
         public double dist;
 
 
-        public Sun (int d)
+        public Sun (double d)
         {
             double w = 282.9404 + 4.70935 * Mathf.Pow(10, -5F) * d; // longitude of perihelion
             double a = 1.0;                                         // mean distance
@@ -200,7 +202,7 @@ public class SolarSystemCalculations : MonoBehaviour {
 
 
 
-        public Moon (int d)
+        public Moon (double d)
         {
             n = Rev(125.1228 - 0.0529538083 * d);
             i = Rev(5.1454);
@@ -303,7 +305,7 @@ public class SolarSystemCalculations : MonoBehaviour {
             double e1, double e2,
             double M1, double M2,
             Sun sun,
-            int d)
+            double d)
         {
             this.name = name;
             n = (n1 + n2 * d);
@@ -434,12 +436,12 @@ public class SolarSystemCalculations : MonoBehaviour {
         return eAnomNext;
     }
 
-    static int dayNumber (int year, int month, int day)
+    static double dayNumber (int year, int month, int day, double time) // time in UTC
     {
-        return 367 * year - (7 * (year + ((month + 9) / 12))) / 4 + (275 * month) / 9 + day - 730530;
+        return 367 * year - (7 * (year + ((month + 9) / 12))) / 4 + (275 * month) / 9 + day + time/24 - 730530;
     }
 
-    static double precessCorrection (double epoch, int d)
+    static double precessCorrection (double epoch, double d)
     {
         return 3.82394 * Mathf.Pow(10, -5) * (365.2422 * (epoch - 2000.0) - d);
     }
