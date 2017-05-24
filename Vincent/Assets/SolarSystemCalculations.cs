@@ -11,26 +11,10 @@ public class SolarSystemCalculations : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
-        int d = dayNumber(2017,5,23);
-        double merN = (48.3313 + 3.24587*Mathf.Pow(10,-5F) * d) * Mathf.Deg2Rad;
-        double merI = (7.0047 + 5.00 * Mathf.Pow(10, -8F) * d) * Mathf.Deg2Rad;
-        double merW = (29.1241 + 1.01444 * Mathf.Pow(10, -5F) * d) * Mathf.Deg2Rad;
-        double merA = 0.387098;
-        double merE = 0.205635 + 5.59 * Mathf.Pow(10, -10F) * d;
-        double merM = Rev(168.6562 + 4.0923344368 * d);
-        double merEAnom = EAnomIteration(merE, merM);
-        double merX = merA * (Mathf.Cos((float) merEAnom * Mathf.Deg2Rad) - merE);
-        double merY = merA * Mathf.Sqrt((float)(1 - merE * merE)) * Mathf.Sin((float)merEAnom * Mathf.Deg2Rad);
-        double merR = Mathf.Sqrt((float)(merX * merX + merY * merY));
-        double merV = Mathf.Atan2((float)merY, (float)merX);
-        double merEX = merR * (Mathf.Cos((float)merN) * Mathf.Cos((float)(merV + merW)) - Mathf.Sin((float)merN) * Mathf.Sin((float)(merV + merW)) * Mathf.Cos((float)merI));
-        double merEY = merR * (Mathf.Sin((float)merN) * Mathf.Cos((float)(merV + merW)) + Mathf.Cos((float)merN) * Mathf.Sin((float)(merV + merW)) * Mathf.Cos((float)merI));
-        double merEZ = merR * Mathf.Sin((float)(merV + merW)) * (Mathf.Sin((float)merI));
-        double merLon = Mathf.Atan2((float)merEY, (float)merEX);
-        double merRsphe = Mathf.Sqrt((float)(merEX * merEX + merEY * merEY + merEZ * merEZ));
-        double merLat = Mathf.Atan2((float)merEZ, Mathf.Sqrt((float)(merEX * merEX + merEY * merEY)));
+        int d = dayNumber(1990,4,19);
         Sun sun = new Sun(d);
-        Planet mer = new Planet(
+
+        Planet mercury = new Planet(
             "Mercury",
             48.3313, 3.24587 * Mathf.Pow(10, -5F),
             7.0047, 5.00 * Mathf.Pow(10, -8F),
@@ -40,7 +24,37 @@ public class SolarSystemCalculations : MonoBehaviour {
             168.6562, 4.0923344368,
             sun,
             d);
-        t.text = (mer.coords.ra).ToString();
+        Planet jupiter = new Planet(
+            "Jupiter",
+            100.4542, 2.76854 * Mathf.Pow(10, -5F),
+            1.3030, -1.557 * Mathf.Pow(10, -7F),
+            273.8777, 1.6450 * Mathf.Pow(10, -5F),
+            5.20256,
+            0.048498, 4.469 * Mathf.Pow(10, -9F),
+            19.8950, 0.0830853001,
+            sun,
+            d);
+        Planet saturn = new Planet(
+            "Saturn",
+            113.6634, 2.38980 * Mathf.Pow(10, -5F),
+            2.4886, -1.081 * Mathf.Pow(10, -7F),
+            339.3939, 2.97661 * Mathf.Pow(10, -5F),
+            9.55475,
+            0.055546, -9.499 * Mathf.Pow(10, -9F),
+            316.9670, 0.0334442282,
+            sun,
+            d);
+        Planet uranus = new Planet(
+            "Uranus",
+            74.0005, 1.3978 * Mathf.Pow(10, -5F),
+            0.7733, 1.9 * Mathf.Pow(10, -8F),
+            96.6612, 3.0565 * Mathf.Pow(10, -5F),
+            19.18171,
+            0.047318, 7.45 * Mathf.Pow(10, -9F),
+            142.5905, 0.011725806,
+            sun,
+            d);
+        t.text = (uranus.coords.ra).ToString();
     }
 
     public struct Coords
@@ -122,6 +136,10 @@ public class SolarSystemCalculations : MonoBehaviour {
             i = i1 + i2 * d;
             w = w1 + w2 * d;
             a = a1;
+            if (name == "Uranus")
+            {
+                a += -1.55 * Mathf.Pow(10,-8) * d;
+            }
             e = e1 + e2 * d;
             M = M1 + M2 * d;
             double eAnom = EAnomIteration(e, M);  // Eccentric anomaly
@@ -142,10 +160,44 @@ public class SolarSystemCalculations : MonoBehaviour {
 
 
             // Heliocentric spherical coords
-            double lon = R2D(Mathf.Atan2((float)yEcl, (float)xEcl));
-            double lat = R2D(Mathf.Atan2((float)zEcl, Mathf.Sqrt((float)(xEcl * xEcl + yEcl * yEcl))));
+            double lon = Rev(R2D(Mathf.Atan2((float)yEcl, (float)xEcl)));
+            double lat = Rev(R2D(Mathf.Atan2((float)zEcl, Mathf.Sqrt((float)(xEcl * xEcl + yEcl * yEcl)))));
 
+            // Pertubations calculations for Jupiter, Saturn & Uranus
+            double mJ = Rev(19.8950 + 0.0830853001 * d);   // Mean anomalies
+            double mS = Rev(316.9670 + 0.0334442282 * d);
+            double mU = Rev(142.5905 + 0.011725806 * d);
+            
+            if (name == "Jupiter")
+            {
+                lon += -0.332 * Mathf.Sin((float)D2R(2 * mJ - 5 * mS - 67.6))
+                    - 0.056 * Mathf.Sin((float)D2R(2 * mJ - 2 * mS + 21))
+                    + 0.042 * Mathf.Sin((float)D2R(3 * mJ - 5 * mS + 21))
+                    - 0.036 * Mathf.Sin((float)D2R(mJ - 2 * mS))
+                    + 0.022 * Mathf.Cos((float)D2R(mJ - mS))
+                    + 0.023 * Mathf.Sin((float)D2R(2 * mJ - 3 * mS + 52))
+                    - 0.016 * Mathf.Sin((float)D2R(mJ - 5 * mS - 69));
+            }
+            
+            if (name == "Saturn")
+            {
+                lon += 0.812 * Mathf.Sin((float)D2R(2 * mJ - 5 * mS - 67.6))
+                    - 0.229 * Mathf.Cos((float)D2R(2 * mJ - 4 * mS - 2))
+                    + 0.119 * Mathf.Sin((float)D2R(mJ - 2 * mS - 3))
+                    + 0.046 * Mathf.Sin((float)D2R(2 * mJ - 6 * mS - 69))
+                    + 0.014 * Mathf.Sin((float)D2R(mJ - 3 * mS + 32));
 
+                lat += -0.020 * Mathf.Cos((float)D2R(2 * mJ - 4 * mS - 2))
+                    +0.018 * Mathf.Sin((float)D2R(2 * mJ - 6 * mS - 49));
+
+            }
+            if (name == "Uranus")
+            {
+                lon += 0.040 * Mathf.Sin((float)D2R(mS - 2 * mU + 6))
+                    + 0.035 * Mathf.Sin((float)D2R(mS - 3 * mU + 33))
+                    - 0.015 * Mathf.Sin((float)D2R(mJ - mU + 20));
+            }
+            
             // Geocentric coords
             double xGeo = xEcl + sun.x;
             double yGeo = yEcl + sun.y;
@@ -162,10 +214,15 @@ public class SolarSystemCalculations : MonoBehaviour {
             double dec = R2D(Mathf.Atan2((float)zGeoRot, Mathf.Sqrt((float)(xGeo * xGeo + yGeoRot * yGeoRot))));
             double dist = Mathf.Sqrt((float) (xGeo * xGeo + yGeoRot * yGeoRot + zGeoRot * zGeoRot));
 
-            coords = new Coords(ra, dec);
+
+
+            coords = new Coords(lon, dec);
         }
         
     }
+
+
+    //Utils
 
     static double D2R (double x) // convert x in degress to radians
     {
