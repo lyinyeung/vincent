@@ -10,6 +10,11 @@ public class SolarSystemCalculations : MonoBehaviour {
 
     public Text t;
     public Transform mainCam;
+    public InputField yearIn;
+    public InputField monthIn;
+    public InputField dayIn;
+    public Button confirmDate;
+    public Button realTime;
 
     public GameObject sunObj;
     public GameObject moonObj;
@@ -24,113 +29,17 @@ public class SolarSystemCalculations : MonoBehaviour {
     // Use this for initialization
     void Start () {
 
-        double d = dayNumber(2012,5,20,23.8);
-        Debug.Log(System.DateTime.UtcNow.TimeOfDay.TotalHours);
-        Sun sun = new Sun(d);
-        Moon moon = new Moon(d);
+        double d = dayNumber(System.DateTime.UtcNow.Year, System.DateTime.UtcNow.Month, System.DateTime.UtcNow.Day, System.DateTime.UtcNow.TimeOfDay.TotalHours);
+        d = dayNumber(2017, 5, 24, 23);
+            
+        Button conbtn = confirmDate.GetComponent<Button>();
+        conbtn.onClick.AddListener(setNewDate);
 
-        Planet mercury = new Planet(
-            "Mercury",
-            48.3313, 3.24587 * Mathf.Pow(10, -5F),
-            7.0047, 5.00 * Mathf.Pow(10, -8F),
-            29.1241, 1.01444 * Mathf.Pow(10, -5F),
-            0.387098,
-            0.205635, 5.59 * Mathf.Pow(10, -10F),
-            168.6562, 4.0923344368,
-            sun,
-            d);
+        Button realbtn = realTime.GetComponent<Button>();
+        realbtn.onClick.AddListener(delegate { instantiateSolarSystem(dayNumber(System.DateTime.UtcNow.Year, System.DateTime.UtcNow.Month, System.DateTime.UtcNow.Day, System.DateTime.UtcNow.TimeOfDay.TotalHours)); });
 
-        Planet venus = new Planet(
-           "Venus",
-           76.6799, 2.46590 * Mathf.Pow(10, -5F),
-           3.3946, 2.75 * Mathf.Pow(10, -8F),
-           54.8910, 1.38374 * Mathf.Pow(10, -5F),
-           0.723330,
-           0.006773, -1.302 * Mathf.Pow(10, -9F),
-           48.0052, 1.6021302244,
-           sun,
-           d);
-
-        Planet mars = new Planet(
-          "Mars",
-          49.5574, 2.11081 * Mathf.Pow(10, -5F),
-          1.8497, -1.78 * Mathf.Pow(10, -8F),
-          286.5016, 2.92961 * Mathf.Pow(10, -5F),
-          1.523688,
-          0.093405, 2.516 * Mathf.Pow(10, -9F),
-          18.6021, 0.5240207766,
-          sun,
-          d);
-
-        Planet jupiter = new Planet(
-            "Jupiter",
-            100.4542, 2.76854 * Mathf.Pow(10, -5F),
-            1.3030, -1.557 * Mathf.Pow(10, -7F),
-            273.8777, 1.6450 * Mathf.Pow(10, -5F),
-            5.20256,
-            0.048498, 4.469 * Mathf.Pow(10, -9F),
-            19.8950, 0.0830853001,
-            sun,
-            d);
-
-        Planet saturn = new Planet(
-            "Saturn",
-            113.6634, 2.38980 * Mathf.Pow(10, -5F),
-            2.4886, -1.081 * Mathf.Pow(10, -7F),
-            339.3939, 2.97661 * Mathf.Pow(10, -5F),
-            9.55475,
-            0.055546, -9.499 * Mathf.Pow(10, -9F),
-            316.9670, 0.0334442282,
-            sun,
-            d);
-
-        Planet uranus = new Planet(
-            "Uranus",
-            74.0005, 1.3978 * Mathf.Pow(10, -5F),
-            0.7733, 1.9 * Mathf.Pow(10, -8F),
-            96.6612, 3.0565 * Mathf.Pow(10, -5F),
-            19.18171,
-            0.047318, 7.45 * Mathf.Pow(10, -9F),
-            142.5905, 0.011725806,
-            sun,
-            d);
-
-        Planet neptune = new Planet(
-         "Neptune",
-         131.7806, 3.0173 * Mathf.Pow(10, -5F),
-         1.7700, -2.55 * Mathf.Pow(10, -7F),
-         272.8461, -6.027 * Mathf.Pow(10, -6F),
-         30.05826,
-         0.008606, 2.15 * Mathf.Pow(10, -9F),
-         260.2471, 0.005995147,
-         sun,
-         d);
-       // t.text = (sun.coords.ra).ToString();
-
-        for (int i = 0; i < 8; i++)
-        {
-
-        }
         
-        sunObj.transform.position     = sph2Cart(sun.coords.ra, sun.coords.dec, 499 + sun.dist/100);
-        moonObj.transform.position    = sph2Cart(moon.coords.ra, moon.coords.dec, 499);
-        mercuryObj.transform.position = sph2Cart(mercury.coords.ra, mercury.coords.dec, 499 + mercury.dist/100);
-        venusObj.transform.position   = sph2Cart(venus.coords.ra, venus.coords.dec, 499 + venus.dist / 100);
-        marsObj.transform.position    = sph2Cart(mars.coords.ra, mars.coords.dec, 499 + mars.dist / 100);
-        jupiterObj.transform.position = sph2Cart(jupiter.coords.ra, jupiter.coords.dec, 499 + jupiter.dist / 100);
-        saturnObj.transform.position  = sph2Cart(saturn.coords.ra, saturn.coords.dec, 499 + saturn.dist / 100);
-        uranusObj.transform.position  = sph2Cart(uranus.coords.ra, uranus.coords.dec, 499 + uranus.dist / 100);
-        neptuneObj.transform.position = sph2Cart(neptune.coords.ra, neptune.coords.dec, 499 + neptune.dist / 100);
-
-        sunObj.transform.LookAt(mainCam);
-        moonObj.transform.LookAt(mainCam);
-        mercuryObj.transform.LookAt(mainCam);
-        venusObj.transform.LookAt(mainCam);
-        marsObj.transform.LookAt(mainCam);
-        jupiterObj.transform.LookAt(mainCam);
-        saturnObj.transform.LookAt(mainCam);
-        uranusObj.transform.LookAt(mainCam);
-        neptuneObj.transform.LookAt(mainCam);
+        instantiateSolarSystem(d);
         
 
     }
@@ -401,6 +310,118 @@ public class SolarSystemCalculations : MonoBehaviour {
         
     }
 
+    void instantiateSolarSystem(double d)
+    {
+        Sun sun = new Sun(d);
+        Moon moon = new Moon(d);
+
+        Planet mercury = new Planet(
+            "Mercury",
+            48.3313, 3.24587 * Mathf.Pow(10, -5F),
+            7.0047, 5.00 * Mathf.Pow(10, -8F),
+            29.1241, 1.01444 * Mathf.Pow(10, -5F),
+            0.387098,
+            0.205635, 5.59 * Mathf.Pow(10, -10F),
+            168.6562, 4.0923344368,
+            sun,
+            d);
+
+        Planet venus = new Planet(
+           "Venus",
+           76.6799, 2.46590 * Mathf.Pow(10, -5F),
+           3.3946, 2.75 * Mathf.Pow(10, -8F),
+           54.8910, 1.38374 * Mathf.Pow(10, -5F),
+           0.723330,
+           0.006773, -1.302 * Mathf.Pow(10, -9F),
+           48.0052, 1.6021302244,
+           sun,
+           d);
+
+        Planet mars = new Planet(
+          "Mars",
+          49.5574, 2.11081 * Mathf.Pow(10, -5F),
+          1.8497, -1.78 * Mathf.Pow(10, -8F),
+          286.5016, 2.92961 * Mathf.Pow(10, -5F),
+          1.523688,
+          0.093405, 2.516 * Mathf.Pow(10, -9F),
+          18.6021, 0.5240207766,
+          sun,
+          d);
+
+        Planet jupiter = new Planet(
+            "Jupiter",
+            100.4542, 2.76854 * Mathf.Pow(10, -5F),
+            1.3030, -1.557 * Mathf.Pow(10, -7F),
+            273.8777, 1.6450 * Mathf.Pow(10, -5F),
+            5.20256,
+            0.048498, 4.469 * Mathf.Pow(10, -9F),
+            19.8950, 0.0830853001,
+            sun,
+            d);
+
+        Planet saturn = new Planet(
+            "Saturn",
+            113.6634, 2.38980 * Mathf.Pow(10, -5F),
+            2.4886, -1.081 * Mathf.Pow(10, -7F),
+            339.3939, 2.97661 * Mathf.Pow(10, -5F),
+            9.55475,
+            0.055546, -9.499 * Mathf.Pow(10, -9F),
+            316.9670, 0.0334442282,
+            sun,
+            d);
+
+        Planet uranus = new Planet(
+            "Uranus",
+            74.0005, 1.3978 * Mathf.Pow(10, -5F),
+            0.7733, 1.9 * Mathf.Pow(10, -8F),
+            96.6612, 3.0565 * Mathf.Pow(10, -5F),
+            19.18171,
+            0.047318, 7.45 * Mathf.Pow(10, -9F),
+            142.5905, 0.011725806,
+            sun,
+            d);
+
+        Planet neptune = new Planet(
+         "Neptune",
+         131.7806, 3.0173 * Mathf.Pow(10, -5F),
+         1.7700, -2.55 * Mathf.Pow(10, -7F),
+         272.8461, -6.027 * Mathf.Pow(10, -6F),
+         30.05826,
+         0.008606, 2.15 * Mathf.Pow(10, -9F),
+         260.2471, 0.005995147,
+         sun,
+         d);
+        // t.text = (sun.coords.ra).ToString();
+
+
+
+        sunObj.transform.position = sph2Cart(sun.coords.ra, sun.coords.dec, 499 + sun.dist / 100);
+        moonObj.transform.position = sph2Cart(moon.coords.ra, moon.coords.dec, 499);
+        mercuryObj.transform.position = sph2Cart(mercury.coords.ra, mercury.coords.dec, 499 + mercury.dist / 100);
+        venusObj.transform.position = sph2Cart(venus.coords.ra, venus.coords.dec, 499 + venus.dist / 100);
+        marsObj.transform.position = sph2Cart(mars.coords.ra, mars.coords.dec, 499 + mars.dist / 100);
+        jupiterObj.transform.position = sph2Cart(jupiter.coords.ra, jupiter.coords.dec, 499 + jupiter.dist / 100);
+        saturnObj.transform.position = sph2Cart(saturn.coords.ra, saturn.coords.dec, 499 + saturn.dist / 100);
+        uranusObj.transform.position = sph2Cart(uranus.coords.ra, uranus.coords.dec, 499 + uranus.dist / 100);
+        neptuneObj.transform.position = sph2Cart(neptune.coords.ra, neptune.coords.dec, 499 + neptune.dist / 100);
+
+        sunObj.transform.LookAt(mainCam);
+        moonObj.transform.LookAt(mainCam);
+        mercuryObj.transform.LookAt(mainCam);
+        venusObj.transform.LookAt(mainCam);
+        marsObj.transform.LookAt(mainCam);
+        jupiterObj.transform.LookAt(mainCam);
+        saturnObj.transform.LookAt(mainCam);
+        uranusObj.transform.LookAt(mainCam);
+        neptuneObj.transform.LookAt(mainCam);
+    }
+
+
+    void setNewDate()
+    {
+        double d = dayNumber(Convert.ToInt32(yearIn.text), Convert.ToInt32(monthIn.text), Convert.ToInt32(dayIn.text),0);
+        instantiateSolarSystem(d);
+    }
 
     //Utils
 

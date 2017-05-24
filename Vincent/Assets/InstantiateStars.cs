@@ -26,6 +26,7 @@ public class InstantiateStars : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+        
         fov80.SetActive(false);
         fov65.SetActive(false);
         fov60.SetActive(false);
@@ -45,7 +46,7 @@ public class InstantiateStars : MonoBehaviour {
             float z = 0;
             float delta = 1;
             float refSize = 3;
-            Color c = new Color(0,0,0);
+            Color c = new Color(1,1,1);
             foreach (string field in fields)
             {
                 switch (i)
@@ -67,52 +68,52 @@ public class InstantiateStars : MonoBehaviour {
                         delta = Mathf.Pow(2.512F,-mag);
                         
                         var blur = Instantiate(starPrefab, new Vector3(x, y, z), Quaternion.identity);
-                        var star = Instantiate(starPrefab, new Vector3(x, y, z), Quaternion.identity);
-                        star.LookAt(mainCamera.transform);
+                     //   var star = Instantiate(starPrefab, new Vector3(x, y, z), Quaternion.identity);
+                     //   star.LookAt(mainCamera.transform);
                         blur.LookAt(mainCamera.transform);
-                        star.localScale += new Vector3(delta*refSize, delta * refSize);
+                    //    star.localScale += new Vector3(delta*refSize, delta * refSize);
                         blur.localScale += new Vector3(delta * refSize, delta * refSize);
-                        blur.localScale += new Vector3(1.5F, 1.5F);
-                        star.GetComponent<Renderer>().material.color = c;
-                        c.a = 0.3F;
+                    //    blur.localScale += new Vector3(1.5F, 1.5F);
+                    //    star.GetComponent<Renderer>().material.color = c;
+                      //  c.a = 0.3F;
                         blur.GetComponent<Renderer>().material.color = c;
-
+                        
                         if (mag<=5.0)
                         {
                             blur.transform.parent = fov80.transform;
-                            star.transform.parent = fov80.transform;
+                          //  star.transform.parent = fov80.transform;
                         }
                         else if (mag<=5.5 && mag > 5.0)
                         {
                             blur.transform.parent = fov65.transform;
-                            star.transform.parent = fov65.transform;
+                           // star.transform.parent = fov65.transform;
                         }
                         else if (mag<=5.75 && mag > 5.5)
                         {
                             blur.transform.parent = fov60.transform;
-                            star.transform.parent = fov60.transform;
+                          //  star.transform.parent = fov60.transform;
                         }
                         else if (mag<=6.0 && mag > 5.75)
                         {
                             blur.transform.parent = fov45.transform;
-                            star.transform.parent = fov45.transform;
+                          //  star.transform.parent = fov45.transform;
                         }
                         else if (mag<=6.25 && mag > 6.0)
                         {
                             blur.transform.parent = fov30.transform;
-                            star.transform.parent = fov30.transform;
-                        }
+                          //  star.transform.parent = fov30.transform;
+                        }//
                         else if (mag<=6.5 && mag > 6.25)
                         {
                             blur.transform.parent = fov25.transform;
-                            star.transform.parent = fov25.transform;
+                          //  star.transform.parent = fov25.transform;
                         }
                         else
                         {
                             blur.transform.parent = fov20.transform;
-                            star.transform.parent = fov20.transform;
+                           // star.transform.parent = fov20.transform;
                         }
-
+                        
                         break;
                     default:
                         break;
@@ -183,11 +184,12 @@ public class InstantiateStars : MonoBehaviour {
             b = 0.63 - (0.6 * t * t);
         }
 
-        return new Color((float)r, (float)g, (float)b, 0.7F);
+        return new Color((float)r, (float)g, (float)b, 0.7f);
     }
 
     
 	// Update is called once per frame
+    
 	void Update () {
         if (mainCamera.fieldOfView <= 80)
         {
