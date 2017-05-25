@@ -13,6 +13,7 @@ public class SolarSystemCalculations : MonoBehaviour {
     public InputField yearIn;
     public InputField monthIn;
     public InputField dayIn;
+    public InputField timeIn;
     public Button confirmDate;
     public Button realTime;
 
@@ -64,7 +65,11 @@ public class SolarSystemCalculations : MonoBehaviour {
         public double x;    
         public double y;
         public double z;
-        public double dist;
+
+        public double dist; // in astronomical unit
+        public double dia;  // Apparent diameter
+
+        public double lon;
 
 
         public Sun (double d)
@@ -80,10 +85,9 @@ public class SolarSystemCalculations : MonoBehaviour {
             double yEcl = (Mathf.Sin((float) D2R(eAnom)) * Mathf.Sqrt((float)(1 - e * e)));
             double r = Mathf.Sqrt((float)(xEcl * xEcl + yEcl * yEcl));
             double v = R2D(Mathf.Atan2((float)yEcl, (float)xEcl));
+           
 
-           // double cor = precessCorrection(2000, d);
-
-            double lon = Rev(v + w);
+            lon = Rev(v + w);
             x = r * Mathf.Cos((float)(D2R(lon)));
             y = r * Mathf.Sin((float)(D2R(lon)));
             z = 0.0;
@@ -93,6 +97,7 @@ public class SolarSystemCalculations : MonoBehaviour {
             double ra = R2D(Mathf.Atan2((float)yEq, (float)xEq));
             double dec = R2D(Mathf.Atan2((float)zEq, Mathf.Sqrt((float)(xEq * xEq + yEq * yEq))));
             dist = r;
+            dia = 1919.26 / dist;
             coords = new Coords(ra, dec);
         }
     }
@@ -108,10 +113,13 @@ public class SolarSystemCalculations : MonoBehaviour {
         public double a;      // Semi-major axis
         public double e;      // Eccentricity
         public double M;      // Mean anomoaly
+        public double dia;    // Apparent diameter
+        public double phase;  // Phase
+        public double elon;   // Elongation
 
 
 
-        public Moon (double d)
+        public Moon (double d, Sun sun)
         {
             n = Rev(125.1228 - 0.0529538083 * d);
             i = Rev(5.1454);
@@ -181,9 +189,14 @@ public class SolarSystemCalculations : MonoBehaviour {
 
             double ra = Rev(R2D(Mathf.Atan2((float)yGeoRot, (float)xGeoRot)));
             double dec = R2D(Mathf.Atan2((float)zGeoRot, Mathf.Sqrt((float)(xGeoRot * xGeoRot + yGeoRot * yGeoRot))));
-            double dist = Mathf.Sqrt((float)(xGeoRot * xGeoRot + yGeoRot * yGeoRot + zGeoRot * zGeoRot));
+            double dist = Mathf.Sqrt((float)(xGeoRot * xGeoRot + yGeoRot * yGeoRot + zGeoRot * zGeoRot)); // Distance in Earth radii
 
-            
+            dia = 1873.7 * 60 / dist;
+
+            elon = R2D(Mathf.Acos(Mathf.Cos((float) D2R(sun.lon * lon)) * Mathf.Cos((float)D2R(lat))));
+            double pAngle = 180 - elon; // Phase angle
+            phase = (1 + Mathf.Cos((float)D2R(pAngle))) / 2;
+
 
             coords = new Coords(ra, dec);
         }
@@ -203,7 +216,12 @@ public class SolarSystemCalculations : MonoBehaviour {
         public double e;      // Eccentricity
         public double M;      // Mean anomoaly
         public Coords coords; // RA and Dec
-        public double dist;   // Distance from Earth
+        public double dist;   // Distance from Earth, in astronomical unit
+        public double diaE;   // Apparent equatorial diameter, in astronomical unit
+        public double diaP;   // Apparent polar diameter
+        public double phase;  // Current phase
+        public double elon;   // Elongation 
+        public double mag;    // Magnitude
 
         public Planet(
             string name,
@@ -214,7 +232,9 @@ public class SolarSystemCalculations : MonoBehaviour {
             double e1, double e2,
             double M1, double M2,
             Sun sun,
-            double d)
+            double d,
+            double d0E, double d0P,
+            double ma1, double ma2)
         {
             this.name = name;
             n = (n1 + n2 * d);
@@ -284,7 +304,10 @@ public class SolarSystemCalculations : MonoBehaviour {
                     + 0.035 * Mathf.Sin((float)D2R(mS - 3 * mU + 33))
                     - 0.015 * Mathf.Sin((float)D2R(mJ - mU + 20));
             }
-            
+
+            lon += precessCorrection(2000, d);
+
+
             xEcl = r * Mathf.Cos((float)D2R(lon)) * Mathf.Cos((float)D2R(lat));
             yEcl = r * Mathf.Sin((float)D2R(lon)) * Mathf.Cos((float)D2R(lat));
             zEcl = r * Mathf.Sin((float)D2R(lat));
@@ -304,6 +327,14 @@ public class SolarSystemCalculations : MonoBehaviour {
             double dec = R2D(Mathf.Atan2((float)zGeoRot, Mathf.Sqrt((float)(xGeo * xGeo + yGeoRot * yGeoRot))));
             dist = Mathf.Sqrt((float) (xGeo * xGeo + yGeoRot * yGeoRot + zGeoRot * zGeoRot));
 
+            double s = sun.dist;
+            double pAngle = R2D(Mathf.Acos((float)((r * r + dist * dist - s * s) / (2 * s * dist))));
+            phase = (1 + Mathf.Cos((float) D2R(pAngle))) / 2;
+            elon = R2D(Mathf.Acos((float) ((s * s + dist * dist - r * r) / (2 * s * dist))));
+            diaE = d0E / dist;
+            diaP = d0P / dist;
+
+            mag = ma1 + 5 * Mathf.Log10((float) (r * dist)) + ma2 * pAngle;
             
             coords = new Coords(ra, dec);
         }
@@ -313,7 +344,7 @@ public class SolarSystemCalculations : MonoBehaviour {
     void instantiateSolarSystem(double d)
     {
         Sun sun = new Sun(d);
-        Moon moon = new Moon(d);
+        Moon moon = new Moon(d, sun);
 
         Planet mercury = new Planet(
             "Mercury",
@@ -324,7 +355,9 @@ public class SolarSystemCalculations : MonoBehaviour {
             0.205635, 5.59 * Mathf.Pow(10, -10F),
             168.6562, 4.0923344368,
             sun,
-            d);
+            d,
+            6.74, 6.74,
+            -0.36, 0.027);
 
         Planet venus = new Planet(
            "Venus",
@@ -335,7 +368,9 @@ public class SolarSystemCalculations : MonoBehaviour {
            0.006773, -1.302 * Mathf.Pow(10, -9F),
            48.0052, 1.6021302244,
            sun,
-           d);
+           d,
+           16.92, 16.92,
+           -4.34, 0.013);
 
         Planet mars = new Planet(
           "Mars",
@@ -346,7 +381,9 @@ public class SolarSystemCalculations : MonoBehaviour {
           0.093405, 2.516 * Mathf.Pow(10, -9F),
           18.6021, 0.5240207766,
           sun,
-          d);
+          d,
+          9.36, 9.28,
+          -1.51, 0.016);
 
         Planet jupiter = new Planet(
             "Jupiter",
@@ -357,7 +394,9 @@ public class SolarSystemCalculations : MonoBehaviour {
             0.048498, 4.469 * Mathf.Pow(10, -9F),
             19.8950, 0.0830853001,
             sun,
-            d);
+            d,
+            196.94, 185.08,
+            -9.25, 0.014);
 
         Planet saturn = new Planet(
             "Saturn",
@@ -368,7 +407,9 @@ public class SolarSystemCalculations : MonoBehaviour {
             0.055546, -9.499 * Mathf.Pow(10, -9F),
             316.9670, 0.0334442282,
             sun,
-            d);
+            d,
+            165.6, 150.8,
+            -9, 0.044);
 
         Planet uranus = new Planet(
             "Uranus",
@@ -379,7 +420,9 @@ public class SolarSystemCalculations : MonoBehaviour {
             0.047318, 7.45 * Mathf.Pow(10, -9F),
             142.5905, 0.011725806,
             sun,
-            d);
+            d,
+            65.8, 62.1,
+            -7.15, 0.001);
 
         Planet neptune = new Planet(
          "Neptune",
@@ -390,7 +433,9 @@ public class SolarSystemCalculations : MonoBehaviour {
          0.008606, 2.15 * Mathf.Pow(10, -9F),
          260.2471, 0.005995147,
          sun,
-         d);
+         d,
+         62.2, 60.9,
+         -6.9, 0.001);
         // t.text = (sun.coords.ra).ToString();
 
 
@@ -419,7 +464,7 @@ public class SolarSystemCalculations : MonoBehaviour {
 
     void setNewDate()
     {
-        double d = dayNumber(Convert.ToInt32(yearIn.text), Convert.ToInt32(monthIn.text), Convert.ToInt32(dayIn.text),0);
+        double d = dayNumber(Convert.ToInt32(yearIn.text), Convert.ToInt32(monthIn.text), Convert.ToInt32(dayIn.text), Convert.ToDouble(timeIn.text));
         instantiateSolarSystem(d);
     }
 
