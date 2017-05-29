@@ -9,6 +9,7 @@ public class InstantiateStars : MonoBehaviour {
     public TextAsset csvFile; // Reference of catalog CSV file
     public Transform starPrefab; // Reference for generic star prefab
     public Camera mainCamera; // Target for LookAt billboard effect
+    public Transform starsParent; // Top level parent for stars obj
 
     public GameObject fov80;
     public GameObject fov65;
@@ -18,6 +19,7 @@ public class InstantiateStars : MonoBehaviour {
     public GameObject fov25;
     public GameObject fov20;
 
+    
 
 
     private char lineSeperater = '\n'; // It defines line seperate character
@@ -52,13 +54,13 @@ public class InstantiateStars : MonoBehaviour {
                 switch (i)
                 {
                     case 0:
-                        z = float.Parse(field);
+                        x = float.Parse(field);
                         break;
                     case 1:
                         y = float.Parse(field);
                         break;
                     case 2:
-                        x = float.Parse(field);            
+                        z = float.Parse(field);            
                         break;
                     case 3:
                         c = Bv2rgb(float.Parse(field));
@@ -67,10 +69,10 @@ public class InstantiateStars : MonoBehaviour {
                         float mag = float.Parse(field);
                         delta = Mathf.Pow(2.512F,-mag);
                         
-                        var blur = Instantiate(starPrefab, new Vector3(x, y, z), Quaternion.identity);
+                        var blur = Instantiate(starPrefab, new Vector3(0, 0, 0), Quaternion.identity);
                      //   var star = Instantiate(starPrefab, new Vector3(x, y, z), Quaternion.identity);
                      //   star.LookAt(mainCamera.transform);
-                        blur.LookAt(mainCamera.transform);
+                        
                     //    star.localScale += new Vector3(delta*refSize, delta * refSize);
                         blur.localScale += new Vector3(delta * refSize, delta * refSize);
                     //    blur.localScale += new Vector3(1.5F, 1.5F);
@@ -113,15 +115,20 @@ public class InstantiateStars : MonoBehaviour {
                             blur.transform.parent = fov20.transform;
                            // star.transform.parent = fov20.transform;
                         }
-                        
+
+                        blur.localPosition = new Vector3(x, y, z);
+                        blur.LookAt(mainCamera.transform);
                         break;
                     default:
                         break;
                 }
                 i++;
             }
+            
         }
 
+
+        starsParent.Rotate(new Vector3(-1, 0, 0), Space.Self);
 
     }
 

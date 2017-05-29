@@ -12,12 +12,12 @@ public class InstantiateSphereGrid : MonoBehaviour {
         {
             Instantiate(linePrefab, new Vector3(0, 0, 0), Quaternion.identity).Rotate(new Vector3(0, 0 + (15 * i), 0), Space.Self);
         }
-        for (int i = 0; i < 3; i++)
-        {
+     //   for (int i = 0; i < 3; i++)
+   //     {
             var lineH = Instantiate(linePrefab, new Vector3(0, 0, 0), Quaternion.identity);
             lineH.Rotate(new Vector3(90, 0), Space.Self);
 
-        }
+      //  }
 	}
 	
 	// Update is called once per frame
