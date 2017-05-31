@@ -17,8 +17,8 @@ public class SolarSystemCalculations : MonoBehaviour {
     public Button confirmDate;
     public Button realTime;
 
-    public int simSpeedH = 0;
-    public int simSpeedD = 0;
+    public float simSpeedH = 0;
+    public float simSpeedD = 0;
     public Button stopSim;
     public Button advHourSim;
     public Button advDaySim;
@@ -55,13 +55,17 @@ public class SolarSystemCalculations : MonoBehaviour {
     public Transform uranusSha;
     public Transform neptuneSha;
 
-    // public Transform moonShadow;
+    public Text currentTimeTxt;
+    public DateTime currentTime;
+    
 
     public double currentD; // Current day number
 
     // Use this for initialization
     void Start () {
 
+
+        currentTime = System.DateTime.UtcNow;
         currentD = dayNumber(System.DateTime.UtcNow.Year, System.DateTime.UtcNow.Month, System.DateTime.UtcNow.Day, System.DateTime.UtcNow.TimeOfDay.TotalHours);
         //d = dayNumber(2017, 5, 24, 23);
 
@@ -71,10 +75,11 @@ public class SolarSystemCalculations : MonoBehaviour {
 
 
         Button conbtn = confirmDate.GetComponent<Button>();
-        conbtn.onClick.AddListener(setRealTime);
+        conbtn.onClick.AddListener(setNewTime);
 
         Button realbtn = realTime.GetComponent<Button>();
         realbtn.onClick.AddListener(delegate { instantiateSolarSystem(dayNumber(System.DateTime.UtcNow.Year, System.DateTime.UtcNow.Month, System.DateTime.UtcNow.Day, System.DateTime.UtcNow.TimeOfDay.TotalHours)); });
+        realbtn.onClick.AddListener(realCurrTime);
 
         Button stopbtn = stopSim.GetComponent<Button>();
         stopbtn.onClick.AddListener(stopTime);
@@ -118,7 +123,7 @@ public class SolarSystemCalculations : MonoBehaviour {
         public Sun (double d)
         {
             double w = 282.9404 + 4.70935 * Mathf.Pow(10, -5F) * d; // longitude of perihelion
-            double a = 1.0;                                         // mean distance
+         //   double a = 1.0;                                         // mean distance
             double e = 0.016709 - 1.151 * Mathf.Pow(10, -9F) * d;   // eccentricity
             double m = Rev(356.0470 + 0.9856002585 * d);            // mean anomaly
             double o = 23.4393 - 3.563 * Mathf.Pow(10, -7F) * d;    // obliquity of the ecliptic
@@ -506,7 +511,7 @@ public class SolarSystemCalculations : MonoBehaviour {
 
 
         //moonShadow.localScale = new Vector3(0, 0);
-
+        /*
         Debug.Log(sun.dia);
         Debug.Log(moon.elon);
         Debug.Log(mercury.elon);
@@ -514,13 +519,13 @@ public class SolarSystemCalculations : MonoBehaviour {
         Debug.Log(mars.elon);
         Debug.Log(jupiter.elon);
         Debug.Log(uranus.elon);
-        Debug.Log(neptune.elon);
+        Debug.Log(neptune.elon);*/
 
         
        
         // Apparaent diameters
         sunTr.localScale = new Vector3((float) sun.dia / 2, (float) sun.dia/2 );
-        moonTr.localScale = new Vector3((float)moon.dia / 2, (float)moon.dia / 2);
+        moonTr.localScale = new Vector3((float)moon.dia / 3, (float)moon.dia / 3);
         mercuryTr.localScale = new Vector3((float)mercury.diaE , (float)mercury.diaP );
         venusTr.localScale = new Vector3((float)venus.diaE , (float)venus.diaP);
         marsTr.localScale = new Vector3((float)mars.diaE , (float)mars.diaP);
@@ -594,22 +599,33 @@ public class SolarSystemCalculations : MonoBehaviour {
         neptuneSha.GetComponent<Renderer>().material.color = color;
 
 
-
-
-
-
     }
 
 
-    void setRealTime() // Updates solar system to real time
+
+
+
+    // Methods for time simulation
+    void setNewTime() // Updates solar system to inputted time
     {
         double d = dayNumber(Convert.ToInt32(yearIn.text), Convert.ToInt32(monthIn.text), Convert.ToInt32(dayIn.text), Convert.ToDouble(timeIn.text));
+        Debug.Log((Int32)((Convert.ToDouble(timeIn.text) % 1) * 60));
+        //currentTime.Year = yearIn.text;
+        currentTime = new DateTime(Convert.ToInt32(yearIn.text), Convert.ToInt32(monthIn.text), Convert.ToInt32(dayIn.text),
+            (Int32)Convert.ToDouble(timeIn.text),(Int32) ((Convert.ToDouble(timeIn.text) % 1) * 60), 0);
         currentD = d;
         instantiateSolarSystem(d);
     }
 
+    void realCurrTime()
+    {
+        currentTime = System.DateTime.UtcNow;
+    }
+
+
     void advanceDay()
     {
+        currentTime = currentTime.AddDays(1);
         instantiateSolarSystem(currentD + 1);
     }
 
@@ -618,13 +634,14 @@ public class SolarSystemCalculations : MonoBehaviour {
         simSpeedH = 0;
         simSpeedD++;
         simStatus.text = "+" + simSpeedD + " d/s";
-        CancelInvoke("advanceHour");
-        InvokeRepeating("advanceDay", 0.0f, 1.0f);
+        CancelInvoke();
+        InvokeRepeating("advanceDay", 0.0f, (1 / simSpeedD));
     }
 
 
     void advanceHour()
     {
+        currentTime = currentTime.AddHours(1);
         instantiateSolarSystem(currentD + 0.04166667);
     }
 
@@ -633,8 +650,8 @@ public class SolarSystemCalculations : MonoBehaviour {
         simSpeedD = 0;
         simSpeedH++;
         simStatus.text = "+" + simSpeedH + " h/s";
-        CancelInvoke("advanceDay");
-        InvokeRepeating("advanceHour", 0.0f, 1.0f);
+        CancelInvoke();
+        InvokeRepeating("advanceHour", 0.0f, (1 / simSpeedH));
     }
 
     void stopTime()
@@ -644,6 +661,13 @@ public class SolarSystemCalculations : MonoBehaviour {
         simSpeedD = 0;
         CancelInvoke();
     }
+
+
+
+
+
+
+
 
     //Utils
 
@@ -697,5 +721,10 @@ public class SolarSystemCalculations : MonoBehaviour {
         return new Vector3((float)x, (float)y, (float)z);
     }
 
-	
+
+    void Update()
+    {
+        currentTimeTxt.text = currentTime.Day + "/" + currentTime.Month + "/" + currentTime.Year + "  " + currentTime.Hour.ToString("D2") + ":" + currentTime.Minute.ToString("D2");
+    }
+
 }
