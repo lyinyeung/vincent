@@ -17,6 +17,14 @@ public class SolarSystemCalculations : MonoBehaviour {
     public Button confirmDate;
     public Button realTime;
 
+    public int simSpeedH = 0;
+    public int simSpeedD = 0;
+    public Button stopSim;
+    public Button advHourSim;
+    public Button advDaySim;
+    public Text simStatus;
+
+    // Parent objects
     public GameObject sunObj;
     public GameObject moonObj;
     public GameObject mercuryObj;
@@ -27,21 +35,56 @@ public class SolarSystemCalculations : MonoBehaviour {
     public GameObject uranusObj;
     public GameObject neptuneObj;
 
+    // Child image
+    public Transform sunTr;
+    public Transform moonTr;
+    public Transform mercuryTr;
+    public Transform venusTr;
+    public Transform marsTr;
+    public Transform jupiterTr;
+    public Transform saturnTr;
+    public Transform uranusTr;
+    public Transform neptuneTr;
+    
+    // Child shadow
+    public Transform mercurySha;
+    public Transform venusSha;
+    public Transform marsSha;
+    public Transform jupiterSha;
+    public Transform saturnSha;
+    public Transform uranusSha;
+    public Transform neptuneSha;
+
+    // public Transform moonShadow;
+
+    public double currentD; // Current day number
+
     // Use this for initialization
     void Start () {
 
-        double d = dayNumber(System.DateTime.UtcNow.Year, System.DateTime.UtcNow.Month, System.DateTime.UtcNow.Day, System.DateTime.UtcNow.TimeOfDay.TotalHours);
-        d = dayNumber(2017, 5, 24, 23);
-            
+        currentD = dayNumber(System.DateTime.UtcNow.Year, System.DateTime.UtcNow.Month, System.DateTime.UtcNow.Day, System.DateTime.UtcNow.TimeOfDay.TotalHours);
+        //d = dayNumber(2017, 5, 24, 23);
+
+
+        instantiateSolarSystem(currentD);
+       // InvokeRepeating("advanceHour", 0.0f, 1.0f);
+
+
         Button conbtn = confirmDate.GetComponent<Button>();
-        conbtn.onClick.AddListener(setNewDate);
+        conbtn.onClick.AddListener(setRealTime);
 
         Button realbtn = realTime.GetComponent<Button>();
         realbtn.onClick.AddListener(delegate { instantiateSolarSystem(dayNumber(System.DateTime.UtcNow.Year, System.DateTime.UtcNow.Month, System.DateTime.UtcNow.Day, System.DateTime.UtcNow.TimeOfDay.TotalHours)); });
 
-        
-        instantiateSolarSystem(d);
-        
+        Button stopbtn = stopSim.GetComponent<Button>();
+        stopbtn.onClick.AddListener(stopTime);
+
+        Button adv1hbtn = advHourSim.GetComponent<Button>();
+        adv1hbtn.onClick.AddListener(advanceHourInv);
+
+        Button adv1dbtn = advDaySim.GetComponent<Button>();
+        adv1dbtn.onClick.AddListener(advanceDayInv);
+
 
     }
 
@@ -98,6 +141,7 @@ public class SolarSystemCalculations : MonoBehaviour {
             double dec = R2D(Mathf.Atan2((float)zEq, Mathf.Sqrt((float)(xEq * xEq + yEq * yEq))));
             dist = r;
             dia = 1919.26 / dist;
+            dia = Mathf.Log((float)dia);
             coords = new Coords(ra, dec);
         }
     }
@@ -192,10 +236,13 @@ public class SolarSystemCalculations : MonoBehaviour {
             double dist = Mathf.Sqrt((float)(xGeoRot * xGeoRot + yGeoRot * yGeoRot + zGeoRot * zGeoRot)); // Distance in Earth radii
 
             dia = 1873.7 * 60 / dist;
+            dia = Mathf.Log((float)dia);
 
             elon = R2D(Mathf.Acos(Mathf.Cos((float) D2R(sun.lon * lon)) * Mathf.Cos((float)D2R(lat))));
             double pAngle = 180 - elon; // Phase angle
             phase = (1 + Mathf.Cos((float)D2R(pAngle))) / 2;
+
+
 
 
             coords = new Coords(ra, dec);
@@ -333,6 +380,8 @@ public class SolarSystemCalculations : MonoBehaviour {
             elon = R2D(Mathf.Acos((float) ((s * s + dist * dist - r * r) / (2 * s * dist))));
             diaE = d0E / dist;
             diaP = d0P / dist;
+            diaE = Mathf.Log10((float)diaE);
+            diaP = Mathf.Log10((float)diaP);
 
             mag = ma1 + 5 * Mathf.Log10((float) (r * dist)) + ma2 * pAngle;
             
@@ -343,6 +392,7 @@ public class SolarSystemCalculations : MonoBehaviour {
 
     void instantiateSolarSystem(double d)
     {
+        currentD = d;
         Sun sun = new Sun(d);
         Moon moon = new Moon(d, sun);
 
@@ -440,6 +490,7 @@ public class SolarSystemCalculations : MonoBehaviour {
 
 
 
+        // Positioning
         sunObj.transform.position = sph2Cart(sun.coords.ra, sun.coords.dec, 499 + sun.dist / 100);
         moonObj.transform.position = sph2Cart(moon.coords.ra, moon.coords.dec, 499);
         mercuryObj.transform.position = sph2Cart(mercury.coords.ra, mercury.coords.dec, 499 + mercury.dist / 100);
@@ -450,6 +501,44 @@ public class SolarSystemCalculations : MonoBehaviour {
         uranusObj.transform.position = sph2Cart(uranus.coords.ra, uranus.coords.dec, 499 + uranus.dist / 100);
         neptuneObj.transform.position = sph2Cart(neptune.coords.ra, neptune.coords.dec, 499 + neptune.dist / 100);
 
+
+
+
+
+        //moonShadow.localScale = new Vector3(0, 0);
+
+        Debug.Log(sun.dia);
+        Debug.Log(moon.elon);
+        Debug.Log(mercury.elon);
+        Debug.Log(venus.elon);
+        Debug.Log(mars.elon);
+        Debug.Log(jupiter.elon);
+        Debug.Log(uranus.elon);
+        Debug.Log(neptune.elon);
+
+        
+       
+        // Apparaent diameters
+        sunTr.localScale = new Vector3((float) sun.dia / 2, (float) sun.dia/2 );
+        moonTr.localScale = new Vector3((float)moon.dia / 2, (float)moon.dia / 2);
+        mercuryTr.localScale = new Vector3((float)mercury.diaE , (float)mercury.diaP );
+        venusTr.localScale = new Vector3((float)venus.diaE , (float)venus.diaP);
+        marsTr.localScale = new Vector3((float)mars.diaE , (float)mars.diaP);
+        jupiterTr.localScale = new Vector3((float)jupiter.diaE , (float)jupiter.diaP);
+        saturnTr.localScale = new Vector3((float)saturn.diaE , (float)saturn.diaP);
+        uranusTr.localScale = new Vector3((float)uranus.diaE, (float)uranus.diaP);
+        neptuneTr.localScale = new Vector3((float)neptune.diaE, (float)neptune.diaP);
+
+        mercurySha.localScale = new Vector3((float)mercury.diaE, (float)mercury.diaP);
+        venusSha.localScale = new Vector3((float)venus.diaE, (float)venus.diaP);
+        marsSha.localScale = new Vector3((float)mars.diaE, (float)mars.diaP);
+        jupiterSha.localScale = new Vector3((float)jupiter.diaE, (float)jupiter.diaP);
+        saturnSha.localScale = new Vector3((float)saturn.diaE, (float)saturn.diaP);
+        uranusSha.localScale = new Vector3((float)uranus.diaE, (float)uranus.diaP);
+        neptuneSha.localScale = new Vector3((float)neptune.diaE, (float)neptune.diaP);
+
+
+        // Billboarding
         sunObj.transform.LookAt(mainCam);
         moonObj.transform.LookAt(mainCam);
         mercuryObj.transform.LookAt(mainCam);
@@ -459,13 +548,101 @@ public class SolarSystemCalculations : MonoBehaviour {
         saturnObj.transform.LookAt(mainCam);
         uranusObj.transform.LookAt(mainCam);
         neptuneObj.transform.LookAt(mainCam);
+
+        
+
+
+        // Elongation
+        Color color = mercurySha.GetComponent<Renderer>().material.color;
+        color.a = (float) (1 - mercury.elon / 100);
+        mercurySha.GetComponent<Renderer>().material.color = color;
+
+        color = venusSha.GetComponent<Renderer>().material.color;
+        color.a = (float)(1 - venus.elon / 100);
+        venusSha.GetComponent<Renderer>().material.color = color;
+
+        color = marsSha.GetComponent<Renderer>().material.color;
+        color.a = (float)(1 - mars.elon / 100);
+        marsSha.GetComponent<Renderer>().material.color = color;
+
+        color = jupiterSha.GetComponent<Renderer>().material.color;
+        color.a = (float)(1 - jupiter.elon / 100);
+        jupiterSha.GetComponent<Renderer>().material.color = color;
+
+        color = saturnSha.GetComponent<Renderer>().material.color;
+        color.a = (float)(1 - saturn.elon / 100);
+        saturnSha.GetComponent<Renderer>().material.color = color;
+
+        color = saturnSha.GetComponent<Renderer>().material.color;
+        color.a = (float)(1 - saturn.elon / 100);
+        saturnSha.GetComponent<Renderer>().material.color = color;
+
+        color = saturnSha.GetComponent<Renderer>().material.color;
+        color.a = (float)(1 - saturn.elon / 100);
+        saturnSha.GetComponent<Renderer>().material.color = color;
+
+        color = saturnSha.GetComponent<Renderer>().material.color;
+        color.a = (float)(1 - saturn.elon / 120);
+        saturnSha.GetComponent<Renderer>().material.color = color;
+
+        color = uranusSha.GetComponent<Renderer>().material.color;
+        color.a = (float)(1 - uranus.elon / 120);
+        uranusSha.GetComponent<Renderer>().material.color = color;
+
+        color = neptuneSha.GetComponent<Renderer>().material.color;
+        color.a = (float)(1 - neptune.elon / 120);
+        neptuneSha.GetComponent<Renderer>().material.color = color;
+
+
+
+
+
+
     }
 
 
-    void setNewDate()
+    void setRealTime() // Updates solar system to real time
     {
         double d = dayNumber(Convert.ToInt32(yearIn.text), Convert.ToInt32(monthIn.text), Convert.ToInt32(dayIn.text), Convert.ToDouble(timeIn.text));
+        currentD = d;
         instantiateSolarSystem(d);
+    }
+
+    void advanceDay()
+    {
+        instantiateSolarSystem(currentD + 1);
+    }
+
+    void advanceDayInv()
+    {
+        simSpeedH = 0;
+        simSpeedD++;
+        simStatus.text = "+" + simSpeedD + " d/s";
+        CancelInvoke("advanceHour");
+        InvokeRepeating("advanceDay", 0.0f, 1.0f);
+    }
+
+
+    void advanceHour()
+    {
+        instantiateSolarSystem(currentD + 0.04166667);
+    }
+
+    void advanceHourInv()
+    {
+        simSpeedD = 0;
+        simSpeedH++;
+        simStatus.text = "+" + simSpeedH + " h/s";
+        CancelInvoke("advanceDay");
+        InvokeRepeating("advanceHour", 0.0f, 1.0f);
+    }
+
+    void stopTime()
+    {
+        simStatus.text = "Stopped";
+        simSpeedH = 0;
+        simSpeedD = 0;
+        CancelInvoke();
     }
 
     //Utils
@@ -520,8 +697,5 @@ public class SolarSystemCalculations : MonoBehaviour {
         return new Vector3((float)x, (float)y, (float)z);
     }
 
-	// Update is called once per frame
-	void Update () {
-		
-	}
+	
 }
