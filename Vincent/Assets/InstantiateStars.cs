@@ -118,6 +118,7 @@ public class InstantiateStars : MonoBehaviour {
 
                         blur.localPosition = new Vector3(x, y, z);
                         blur.LookAt(mainCamera.transform);
+                      //  Debug.Log(blur.transform.GetComponent<Renderer>().material);
                         break;
                     default:
                         break;
@@ -128,7 +129,7 @@ public class InstantiateStars : MonoBehaviour {
         }
 
 
-        starsParent.Rotate(new Vector3(-1, 0, 0), Space.Self);
+        //starsParent.Rotate(new Vector3(-1, 0, 0), Space.Self);
 
     }
 

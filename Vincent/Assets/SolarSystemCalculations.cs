@@ -60,8 +60,9 @@ public class SolarSystemCalculations : MonoBehaviour {
     public Transform saturnTr;
     public Transform uranusTr;
     public Transform neptuneTr;
-    
+
     // Child shadow
+    public Transform moonSha;
     public Transform mercurySha;
     public Transform venusSha;
     public Transform marsSha;
@@ -278,7 +279,7 @@ public class SolarSystemCalculations : MonoBehaviour {
             dia = 1873.7 * 60 / dist;
             dia = Mathf.Log((float)dia);
 
-            elon = R2D(Mathf.Acos(Mathf.Cos((float) D2R(sun.lon * lon)) * Mathf.Cos((float)D2R(lat))));
+            elon = R2D(Mathf.Acos(Mathf.Cos((float) D2R(sun.lon - lon)) * Mathf.Cos((float)D2R(lat))));
             double pAngle = 180 - elon; // Phase angle
             phase = (1 + Mathf.Cos((float)D2R(pAngle))) / 2;
 
@@ -448,6 +449,9 @@ public class SolarSystemCalculations : MonoBehaviour {
 
             mag = ma1 + 5 * Mathf.Log10((float) (r * dist)) + ma2 * pAngle;
             
+
+
+
             coords = new Coords(ra, dec);
         }
         
@@ -589,8 +593,8 @@ public class SolarSystemCalculations : MonoBehaviour {
 
 
         // Apparaent diameters
-        sunTr.localScale = new Vector3((float) (sun.dia / 1.8), (float) (sun.dia/1.8) );
-        moonTr.localScale = new Vector3((float)moon.dia / 3, (float)moon.dia / 3);
+        sunTr.localScale = new Vector3((float) (sun.dia / 1.7), (float) (sun.dia/1.7) );
+        moonTr.localScale = new Vector3((float)(moon.dia / 2.5), (float)(moon.dia / 2.5));
         mercuryTr.localScale = new Vector3((float)mercury.diaE , (float)mercury.diaP );
         venusTr.localScale = new Vector3((float)venus.diaE , (float)venus.diaP);
         marsTr.localScale = new Vector3((float)mars.diaE , (float)mars.diaP);
@@ -599,6 +603,7 @@ public class SolarSystemCalculations : MonoBehaviour {
         uranusTr.localScale = new Vector3((float)uranus.diaE, (float)uranus.diaP);
         neptuneTr.localScale = new Vector3((float)neptune.diaE, (float)neptune.diaP);
 
+        moonSha.localScale = new Vector3((float)(moon.dia / 2.5), (float)(moon.dia / 2.5));
         mercurySha.localScale = new Vector3((float)mercury.diaE, (float)mercury.diaP);
         venusSha.localScale = new Vector3((float)venus.diaE, (float)venus.diaP);
         marsSha.localScale = new Vector3((float)mars.diaE, (float)mars.diaP);
@@ -619,11 +624,15 @@ public class SolarSystemCalculations : MonoBehaviour {
         uranusObj.transform.LookAt(mainCam);
         neptuneObj.transform.LookAt(mainCam);
 
-        
+
 
 
         // Elongation
-        Color color = mercurySha.GetComponent<Renderer>().material.color;
+        Color color = moonSha.GetComponent<Renderer>().material.color;
+        color.a = (float)(1 - moon.elon / 100);
+        moonSha.GetComponent<Renderer>().material.color = color;
+
+        color = mercurySha.GetComponent<Renderer>().material.color;
         color.a = (float) (1 - mercury.elon / 100);
         mercurySha.GetComponent<Renderer>().material.color = color;
 
@@ -641,18 +650,6 @@ public class SolarSystemCalculations : MonoBehaviour {
 
         color = saturnSha.GetComponent<Renderer>().material.color;
         color.a = (float)(1 - saturn.elon / 100);
-        saturnSha.GetComponent<Renderer>().material.color = color;
-
-        color = saturnSha.GetComponent<Renderer>().material.color;
-        color.a = (float)(1 - saturn.elon / 100);
-        saturnSha.GetComponent<Renderer>().material.color = color;
-
-        color = saturnSha.GetComponent<Renderer>().material.color;
-        color.a = (float)(1 - saturn.elon / 100);
-        saturnSha.GetComponent<Renderer>().material.color = color;
-
-        color = saturnSha.GetComponent<Renderer>().material.color;
-        color.a = (float)(1 - saturn.elon / 120);
         saturnSha.GetComponent<Renderer>().material.color = color;
 
         color = uranusSha.GetComponent<Renderer>().material.color;
