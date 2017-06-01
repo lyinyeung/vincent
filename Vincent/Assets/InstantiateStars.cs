@@ -48,6 +48,8 @@ public class InstantiateStars : MonoBehaviour {
             float z = 0;
             float delta = 1;
             float refSize = 3;
+            float mag = 0;
+            string starName = "";
             Color c = new Color(1,1,1);
             foreach (string field in fields)
             {
@@ -66,59 +68,75 @@ public class InstantiateStars : MonoBehaviour {
                         c = Bv2rgb(float.Parse(field));
                         break;
                     case 4:
-                        float mag = float.Parse(field);
+                        mag = float.Parse(field);
                         delta = Mathf.Pow(2.512F,-mag);
                         
+                       
+                      //  Debug.Log(blur.transform.GetComponent<Renderer>().material);
+                        break;
+                    case 5:
+                        starName = field;
+
                         var blur = Instantiate(starPrefab, new Vector3(0, 0, 0), Quaternion.identity);
-                     //   var star = Instantiate(starPrefab, new Vector3(x, y, z), Quaternion.identity);
-                     //   star.LookAt(mainCamera.transform);
-                        
-                    //    star.localScale += new Vector3(delta*refSize, delta * refSize);
+                        //   var star = Instantiate(starPrefab, new Vector3(x, y, z), Quaternion.identity);
+                        //   star.LookAt(mainCamera.transform);
+
+                        //    star.localScale += new Vector3(delta*refSize, delta * refSize);
                         blur.localScale += new Vector3(delta * refSize, delta * refSize);
-                    //    blur.localScale += new Vector3(1.5F, 1.5F);
-                    //    star.GetComponent<Renderer>().material.color = c;
-                      //  c.a = 0.3F;
+                        //    blur.localScale += new Vector3(1.5F, 1.5F);
+                        //    star.GetComponent<Renderer>().material.color = c;
+                        //  c.a = 0.3F;
                         blur.GetComponent<Renderer>().material.color = c;
-                        
-                        if (mag<=5.0)
+
+                        if (mag <= 5.0)
                         {
                             blur.transform.parent = fov80.transform;
-                          //  star.transform.parent = fov80.transform;
+                            //  star.transform.parent = fov80.transform;
                         }
-                        else if (mag<=5.5 && mag > 5.0)
+                        else if (mag <= 5.5 && mag > 5.0)
                         {
                             blur.transform.parent = fov65.transform;
-                           // star.transform.parent = fov65.transform;
+                            // star.transform.parent = fov65.transform;
                         }
-                        else if (mag<=5.75 && mag > 5.5)
+                        else if (mag <= 5.75 && mag > 5.5)
                         {
                             blur.transform.parent = fov60.transform;
-                          //  star.transform.parent = fov60.transform;
+                            //  star.transform.parent = fov60.transform;
                         }
-                        else if (mag<=6.0 && mag > 5.75)
+                        else if (mag <= 6.0 && mag > 5.75)
                         {
                             blur.transform.parent = fov45.transform;
-                          //  star.transform.parent = fov45.transform;
+                            //  star.transform.parent = fov45.transform;
                         }
-                        else if (mag<=6.25 && mag > 6.0)
+                        else if (mag <= 6.25 && mag > 6.0)
                         {
                             blur.transform.parent = fov30.transform;
-                          //  star.transform.parent = fov30.transform;
+                            //  star.transform.parent = fov30.transform;
                         }//
-                        else if (mag<=6.5 && mag > 6.25)
+                        else if (mag <= 6.5 && mag > 6.25)
                         {
                             blur.transform.parent = fov25.transform;
-                          //  star.transform.parent = fov25.transform;
+                            //  star.transform.parent = fov25.transform;
                         }
                         else
                         {
                             blur.transform.parent = fov20.transform;
-                           // star.transform.parent = fov20.transform;
+                            // star.transform.parent = fov20.transform;
                         }
 
                         blur.localPosition = new Vector3(x, y, z);
+
+                        if (!starName.Trim().Equals("0"))
+                        {
+                            SphereCollider sc = blur.gameObject.AddComponent<SphereCollider>() as SphereCollider;
+                            sc.name = starName;
+                            sc.radius = 10 / blur.transform.localScale.x;
+
+                        }
+                      //  SphereCollider sc = blur.gameObject.AddComponent<SphereCollider>() as SphereCollider;
+                   //     sc.radius = 2;
+
                         blur.LookAt(mainCamera.transform);
-                      //  Debug.Log(blur.transform.GetComponent<Renderer>().material);
                         break;
                     default:
                         break;
