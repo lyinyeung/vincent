@@ -86,6 +86,9 @@
   <ItemGroup>
     <Compile Include="Assets\BillBoard.cs" />
     <Compile Include="Assets\CSVReader.cs" />
+    <Compile Include="Assets\CameraMode.cs" />
+    <Compile Include="Assets\CameraRaycast.cs" />
+    <Compile Include="Assets\CurrPosition.cs" />
     <Compile Include="Assets\DeactivateForBtn.cs" />
     <Compile Include="Assets\DrawCircle.cs" />
     <Compile Include="Assets\FirstPersonCam.cs" />
@@ -104,6 +107,7 @@
     <Compile Include="Assets\SolarSystemCalculations.cs" />
     <Compile Include="Assets\Starnames.cs" />
     <Compile Include="Assets\SwitchBGmode.cs" />
+    <Compile Include="Assets\TouchCam.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\ExampleCSV.txt" />

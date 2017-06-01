@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 
 public class SolarSystemCalculations : MonoBehaviour {
-
+    // Time stuff
     public Text t;
     public Transform mainCam;
     public InputField yearIn;
@@ -17,12 +17,26 @@ public class SolarSystemCalculations : MonoBehaviour {
     public Button confirmDate;
     public Button realTime;
 
+    // Simulations stuff
     public float simSpeedH = 0;
     public float simSpeedD = 0;
     public Button stopSim;
     public Button advHourSim;
     public Button advDaySim;
+    public Button rewHourSim;
+    public Button rewDaySim;
     public Text simStatus;
+
+    // Location stuff
+    public double devLon = 15;  // Current device longitude
+    public double devLat = 60;  // Current device latitude
+    public bool topocentric = false; // If the app is in topocentric mode or not 
+    public InputField longIn;
+    public InputField latIn;
+    public Button topoBtn;
+    public Button geoBtn;
+    public Text currLocTxt;
+
 
     // Parent objects
     public GameObject sunObj;
@@ -90,7 +104,17 @@ public class SolarSystemCalculations : MonoBehaviour {
         Button adv1dbtn = advDaySim.GetComponent<Button>();
         adv1dbtn.onClick.AddListener(advanceDayInv);
 
+        Button rew1hbtn = rewHourSim.GetComponent<Button>();
+        rew1hbtn.onClick.AddListener(rewindHourInv);
 
+        Button rew1dbtn = rewDaySim.GetComponent<Button>();
+        rew1dbtn.onClick.AddListener(rewindDayInv);
+
+        Button geocbtn = geoBtn.GetComponent<Button>();
+        geocbtn.onClick.AddListener(geocentricMode);
+
+        Button topobtn = topoBtn.GetComponent<Button>();
+        topobtn.onClick.AddListener(topocentricMode);
     }
 
     public struct Coords
@@ -118,16 +142,17 @@ public class SolarSystemCalculations : MonoBehaviour {
         public double dia;  // Apparent diameter
 
         public double lon;
+        public double meanL; // mean longitude
 
 
         public Sun (double d)
         {
             double w = 282.9404 + 4.70935 * Mathf.Pow(10, -5F) * d; // longitude of perihelion
-         //   double a = 1.0;                                         // mean distance
+            double a = 1.0;                                         // mean distance
             double e = 0.016709 - 1.151 * Mathf.Pow(10, -9F) * d;   // eccentricity
             double m = Rev(356.0470 + 0.9856002585 * d);            // mean anomaly
             double o = 23.4393 - 3.563 * Mathf.Pow(10, -7F) * d;    // obliquity of the ecliptic
-            double l = w + m;                                       // mean longitude
+            meanL = w + m;                                       // mean longitude
             double eAnom = EAnomIteration(e, m);                    // eccentric anomaly
             double xEcl = (Mathf.Cos((float) D2R(eAnom)) - e);
             double yEcl = (Mathf.Sin((float) D2R(eAnom)) * Mathf.Sqrt((float)(1 - e * e)));
@@ -154,6 +179,7 @@ public class SolarSystemCalculations : MonoBehaviour {
     public struct Moon
     {
         public Coords coords;
+        public Coords topoCoords; // Topocentric coordinates
 
         // in degrees
         public double n;      // Long of asc. node
@@ -168,7 +194,7 @@ public class SolarSystemCalculations : MonoBehaviour {
 
 
 
-        public Moon (double d, Sun sun)
+        public Moon (double d, Sun sun, double lata, double longa, double ut) // day number, sun, lat and longitude, universal time ut
         {
             n = Rev(125.1228 - 0.0529538083 * d);
             i = Rev(5.1454);
@@ -247,10 +273,33 @@ public class SolarSystemCalculations : MonoBehaviour {
             double pAngle = 180 - elon; // Phase angle
             phase = (1 + Mathf.Cos((float)D2R(pAngle))) / 2;
 
+            // Topocentric calculations
+            double mpar = R2D(Mathf.Asin((float) (1 / dist)));
 
+            double gclat = lata - 0.1924 * Mathf.Sin((float) (2 * D2R(lata)));
+            double rho = 0.99833 + 0.00167 * Mathf.Cos((float)(2 * D2R((lata))));
 
+            double gmst0 = Rev((sun.meanL + 180)) / 15;
+            double lst = gmst0 + ut + longa / 15; // Local sidereal time
+            if (lst > 24)
+            {
+                lst -= 24;
+            }
+            else if (lst < 0)
+            {
+                lst += 24;
+            }
+            double hourAngle = Rev(lst*15 - ra);
+            double auxg = R2D(Mathf.Atan(Mathf.Tan((float)D2R(gclat)) / Mathf.Cos((float)D2R(hourAngle))));
 
+            double topRA = ra - mpar * rho * Mathf.Cos((float)D2R(gclat)) * Mathf.Sin((float)D2R(hourAngle)) / Mathf.Cos((float)D2R(dec));
+            double topDec = dec - mpar * rho * Mathf.Sin((float)D2R(gclat)) * Mathf.Sin((float)D2R(auxg - dec)) / Mathf.Sin((float)D2R(auxg));
+ 
+
+            topoCoords = new Coords(topRA, topDec);
             coords = new Coords(ra, dec);
+       //     Debug.Log(topRA);
+         //   Debug.Log(topDec);
         }
 
     }
@@ -399,7 +448,7 @@ public class SolarSystemCalculations : MonoBehaviour {
     {
         currentD = d;
         Sun sun = new Sun(d);
-        Moon moon = new Moon(d, sun);
+        Moon moon = new Moon(d, sun, devLat, devLon, currentTime.TimeOfDay.TotalHours);
 
         Planet mercury = new Planet(
             "Mercury",
@@ -496,18 +545,31 @@ public class SolarSystemCalculations : MonoBehaviour {
 
 
         // Positioning
-        sunObj.transform.position = sph2Cart(sun.coords.ra, sun.coords.dec, 499 + sun.dist / 100);
-        moonObj.transform.position = sph2Cart(moon.coords.ra, moon.coords.dec, 499);
-        mercuryObj.transform.position = sph2Cart(mercury.coords.ra, mercury.coords.dec, 499 + mercury.dist / 100);
-        venusObj.transform.position = sph2Cart(venus.coords.ra, venus.coords.dec, 499 + venus.dist / 100);
-        marsObj.transform.position = sph2Cart(mars.coords.ra, mars.coords.dec, 499 + mars.dist / 100);
-        jupiterObj.transform.position = sph2Cart(jupiter.coords.ra, jupiter.coords.dec, 499 + jupiter.dist / 100);
-        saturnObj.transform.position = sph2Cart(saturn.coords.ra, saturn.coords.dec, 499 + saturn.dist / 100);
-        uranusObj.transform.position = sph2Cart(uranus.coords.ra, uranus.coords.dec, 499 + uranus.dist / 100);
-        neptuneObj.transform.position = sph2Cart(neptune.coords.ra, neptune.coords.dec, 499 + neptune.dist / 100);
+        sunObj.transform.localPosition = sph2Cart(sun.coords.ra, sun.coords.dec, 499 + (sun.dist / 20));
+        if (topocentric)
+        {
+            moonObj.transform.localPosition = sph2Cart(moon.topoCoords.ra, moon.topoCoords.dec, 498);
 
+            Debug.Log(sph2Cart(moon.topoCoords.ra, moon.topoCoords.dec, 498).x);
+            Debug.Log(sph2Cart(moon.topoCoords.ra, moon.topoCoords.dec, 498).y);
+            Debug.Log(sph2Cart(moon.topoCoords.ra, moon.topoCoords.dec, 498).z);
+        }
+        else
+        {
+            moonObj.transform.localPosition = sph2Cart(moon.coords.ra, moon.coords.dec, 498);
+            Debug.Log(sph2Cart(moon.coords.ra, moon.coords.dec, 498).x);
+            Debug.Log(sph2Cart(moon.coords.ra, moon.coords.dec, 498).y);
+            Debug.Log(sph2Cart(moon.coords.ra, moon.coords.dec, 498).z);
+        }
+        mercuryObj.transform.localPosition = sph2Cart(mercury.coords.ra, mercury.coords.dec, 499 + mercury.dist / 20);
+        venusObj.transform.localPosition = sph2Cart(venus.coords.ra, venus.coords.dec, 499 + venus.dist / 20);
+        marsObj.transform.localPosition = sph2Cart(mars.coords.ra, mars.coords.dec, 499 + mars.dist / 20);
+        jupiterObj.transform.localPosition = sph2Cart(jupiter.coords.ra, jupiter.coords.dec, 499 + jupiter.dist / 20);
+        saturnObj.transform.localPosition = sph2Cart(saturn.coords.ra, saturn.coords.dec, 499 + saturn.dist / 20);
+        uranusObj.transform.localPosition = sph2Cart(uranus.coords.ra, uranus.coords.dec, 499 + uranus.dist / 20);
+        neptuneObj.transform.localPosition = sph2Cart(neptune.coords.ra, neptune.coords.dec, 499 + neptune.dist / 20);
 
-
+        
 
 
         //moonShadow.localScale = new Vector3(0, 0);
@@ -521,10 +583,10 @@ public class SolarSystemCalculations : MonoBehaviour {
         Debug.Log(uranus.elon);
         Debug.Log(neptune.elon);*/
 
-        
-       
+
+
         // Apparaent diameters
-        sunTr.localScale = new Vector3((float) sun.dia / 2, (float) sun.dia/2 );
+        sunTr.localScale = new Vector3((float) (sun.dia / 1.8), (float) (sun.dia/1.8) );
         moonTr.localScale = new Vector3((float)moon.dia / 3, (float)moon.dia / 3);
         mercuryTr.localScale = new Vector3((float)mercury.diaE , (float)mercury.diaP );
         venusTr.localScale = new Vector3((float)venus.diaE , (float)venus.diaP);
@@ -601,6 +663,27 @@ public class SolarSystemCalculations : MonoBehaviour {
 
     }
 
+    // Methods for location
+
+    void geocentricMode()
+    {
+        topocentric = false;
+        instantiateSolarSystem(currentD);
+    }
+
+    void topocentricMode()
+    {
+        topocentric = true;
+        devLat = Convert.ToDouble(latIn.text);
+        devLon = Convert.ToDouble(longIn.text);
+        instantiateSolarSystem(currentD);
+    }
+
+
+
+
+
+
 
 
 
@@ -609,7 +692,7 @@ public class SolarSystemCalculations : MonoBehaviour {
     void setNewTime() // Updates solar system to inputted time
     {
         double d = dayNumber(Convert.ToInt32(yearIn.text), Convert.ToInt32(monthIn.text), Convert.ToInt32(dayIn.text), Convert.ToDouble(timeIn.text));
-        Debug.Log((Int32)((Convert.ToDouble(timeIn.text) % 1) * 60));
+     //   Debug.Log((Int32)((Convert.ToDouble(timeIn.text) % 1) * 60));
         //currentTime.Year = yearIn.text;
         currentTime = new DateTime(Convert.ToInt32(yearIn.text), Convert.ToInt32(monthIn.text), Convert.ToInt32(dayIn.text),
             (Int32)Convert.ToDouble(timeIn.text),(Int32) ((Convert.ToDouble(timeIn.text) % 1) * 60), 0);
@@ -621,37 +704,110 @@ public class SolarSystemCalculations : MonoBehaviour {
     {
         currentTime = System.DateTime.UtcNow;
     }
-
-
-    void advanceDay()
-    {
-        currentTime = currentTime.AddDays(1);
-        instantiateSolarSystem(currentD + 1);
-    }
+    
 
     void advanceDayInv()
     {
-        simSpeedH = 0;
-        simSpeedD++;
-        simStatus.text = "+" + simSpeedD + " d/s";
+        simSpeedH += 24;
+        //simSpeedD++;
+        simStatus.text = "+" + simSpeedH + " h/s";
         CancelInvoke();
-        InvokeRepeating("advanceDay", 0.0f, (1 / simSpeedD));
+        if (simSpeedH > 0)
+        {
+            simStatus.text = "+" + simSpeedH + " h/s";
+            InvokeRepeating("advanceHour", 0.0f, (1 / simSpeedH));
+        }
+        else if (simSpeedH == 0)
+        {
+            simStatus.text = "Stopped";
+        }
+        else
+        {
+            simStatus.text = simSpeedH + " h/s";
+            InvokeRepeating("rewindHour", 0.0f, Mathf.Abs((1 / simSpeedH)));
+        }
+       //     InvokeRepeating("advanceHour", 0.0f, (1 / simSpeedH));
     }
 
 
     void advanceHour()
     {
         currentTime = currentTime.AddHours(1);
-        instantiateSolarSystem(currentD + 0.04166667);
+        instantiateSolarSystem(currentD + 0.04166666667);
     }
 
     void advanceHourInv()
     {
         simSpeedD = 0;
         simSpeedH++;
+     //   simStatus.text = "+" + simSpeedH + " h/s";
+        CancelInvoke();
+        if (simSpeedH > 0)
+        {
+            simStatus.text = "+" + simSpeedH + " h/s";
+            InvokeRepeating("advanceHour", 0.0f, (1 / simSpeedH));
+        }
+        else if (simSpeedH == 0)
+        {
+            simStatus.text = "Stopped";
+        }
+        else
+        {
+            simStatus.text = simSpeedH + " h/s";
+            InvokeRepeating("rewindHour", 0.0f, Mathf.Abs((1 / simSpeedH)));
+        }
+       // InvokeRepeating("advanceHour", 0.0f, (1 / simSpeedH));
+    }
+
+    void rewindHour()
+    {
+        currentTime = currentTime.AddHours(-1);
+        instantiateSolarSystem(currentD - 0.04166666667);
+    }
+
+    void rewindHourInv()
+    {
+        simSpeedH--;
+        CancelInvoke();
+        if (simSpeedH > 0)
+        {
+            simStatus.text = "+" + simSpeedH + " h/s";
+            InvokeRepeating("advanceHour", 0.0f, (1 / simSpeedH));
+        }
+        else if(simSpeedH == 0)
+        {
+            simStatus.text = "Stopped";
+        }
+        else
+        {
+            simStatus.text = simSpeedH + " h/s";
+            InvokeRepeating("rewindHour", 0.0f, Mathf.Abs((1 / simSpeedH)));
+        }
+        
+      //  InvokeRepeating("advanceHour", 0.0f, (1 / simSpeedH));
+    }
+
+    void rewindDayInv()
+    {
+        simSpeedH -= 24;
+        //simSpeedD++;
         simStatus.text = "+" + simSpeedH + " h/s";
         CancelInvoke();
-        InvokeRepeating("advanceHour", 0.0f, (1 / simSpeedH));
+        if (simSpeedH > 0)
+        {
+            simStatus.text = "+" + simSpeedH + " h/s";
+            InvokeRepeating("rewindHour", 0.0f, (1 / simSpeedH));
+        }
+        else if (simSpeedH == 0)
+        {
+            simStatus.text = "Stopped";
+        }
+        else
+        {
+            simStatus.text = simSpeedH + " h/s";
+            InvokeRepeating("rewindHour", 0.0f, Mathf.Abs((1 / simSpeedH)));
+        }
+        //     InvokeRepeating("advanceHour", 0.0f, (1 / simSpeedH));
     }
 
     void stopTime()
@@ -713,10 +869,10 @@ public class SolarSystemCalculations : MonoBehaviour {
         return 3.82394 * Mathf.Pow(10, -5) * (365.2422 * (epoch - 2000.0) - d);
     }
     
-    static Vector3 sph2Cart (double ra, double dec, double r) // takes ra and dec and returns a cartesian vector
+    static Vector3 sph2Cart (double ra, double dec, double r) // takes angular ra and dec and returns a cartesian vector
     {
-        double z = r * Mathf.Cos((float)D2R(ra)) * Mathf.Cos((float)D2R(dec));
-        double x = r * Mathf.Sin((float)D2R(ra)) * Mathf.Cos((float)D2R(dec));
+        double x = r * Mathf.Cos((float)D2R(ra)) * Mathf.Cos((float)D2R(dec));
+        double z = r * Mathf.Sin((float)D2R(ra)) * Mathf.Cos((float)D2R(dec));
         double y = r * Mathf.Sin((float)D2R(dec));
         return new Vector3((float)x, (float)y, (float)z);
     }
@@ -725,6 +881,16 @@ public class SolarSystemCalculations : MonoBehaviour {
     void Update()
     {
         currentTimeTxt.text = currentTime.Day + "/" + currentTime.Month + "/" + currentTime.Year + "  " + currentTime.Hour.ToString("D2") + ":" + currentTime.Minute.ToString("D2");
+
+        if (topocentric)
+        {
+            currLocTxt.text = "Lon: " + devLon.ToString("F3") + "  Lat: " + devLat.ToString("F3");
+
+        }
+        else
+        {
+            currLocTxt.text = "Geocentric";
+        }
     }
 
 }
