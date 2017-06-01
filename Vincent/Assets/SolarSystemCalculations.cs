@@ -35,6 +35,7 @@ public class SolarSystemCalculations : MonoBehaviour {
     public InputField latIn;
     public Button topoBtn;
     public Button geoBtn;
+    public Button gpsBtn;
     public Text currLocTxt;
 
 
@@ -115,6 +116,14 @@ public class SolarSystemCalculations : MonoBehaviour {
 
         Button topobtn = topoBtn.GetComponent<Button>();
         topobtn.onClick.AddListener(topocentricMode);
+
+        Button gpsbtn = gpsBtn.GetComponent<Button>();
+        gpsbtn.onClick.AddListener(gpsLocationMode);
+
+
+        Input.location.Start();
+        
+
     }
 
     public struct Coords
@@ -549,17 +558,11 @@ public class SolarSystemCalculations : MonoBehaviour {
         if (topocentric)
         {
             moonObj.transform.localPosition = sph2Cart(moon.topoCoords.ra, moon.topoCoords.dec, 498);
-
-            Debug.Log(sph2Cart(moon.topoCoords.ra, moon.topoCoords.dec, 498).x);
-            Debug.Log(sph2Cart(moon.topoCoords.ra, moon.topoCoords.dec, 498).y);
-            Debug.Log(sph2Cart(moon.topoCoords.ra, moon.topoCoords.dec, 498).z);
+            
         }
         else
         {
             moonObj.transform.localPosition = sph2Cart(moon.coords.ra, moon.coords.dec, 498);
-            Debug.Log(sph2Cart(moon.coords.ra, moon.coords.dec, 498).x);
-            Debug.Log(sph2Cart(moon.coords.ra, moon.coords.dec, 498).y);
-            Debug.Log(sph2Cart(moon.coords.ra, moon.coords.dec, 498).z);
         }
         mercuryObj.transform.localPosition = sph2Cart(mercury.coords.ra, mercury.coords.dec, 499 + mercury.dist / 20);
         venusObj.transform.localPosition = sph2Cart(venus.coords.ra, venus.coords.dec, 499 + venus.dist / 20);
@@ -679,6 +682,18 @@ public class SolarSystemCalculations : MonoBehaviour {
         instantiateSolarSystem(currentD);
     }
 
+    void gpsLocationMode()
+    {
+        topocentric = true;
+        //  Input.location.Start();
+        //   Debug.Log(Input.location.isEnabledByUser);
+   //     currLocTxt.text = Input.location.status.ToString();
+   //     yield return new WaitForSeconds(5);
+        devLat = Input.location.lastData.latitude;
+        devLon = Input.location.lastData.longitude;
+        instantiateSolarSystem(currentD);
+    }
+   
 
 
 
@@ -881,6 +896,7 @@ public class SolarSystemCalculations : MonoBehaviour {
     void Update()
     {
         currentTimeTxt.text = currentTime.Day + "/" + currentTime.Month + "/" + currentTime.Year + "  " + currentTime.Hour.ToString("D2") + ":" + currentTime.Minute.ToString("D2");
+        
 
         if (topocentric)
         {
@@ -891,6 +907,7 @@ public class SolarSystemCalculations : MonoBehaviour {
         {
             currLocTxt.text = "Geocentric";
         }
+      //  currLocTxt.text = Input.location.status.ToString();
     }
 
 }
