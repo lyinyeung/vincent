@@ -88,6 +88,7 @@
     <Compile Include="Assets\CSVReader.cs" />
     <Compile Include="Assets\CameraMode.cs" />
     <Compile Include="Assets\CameraRaycast.cs" />
+    <Compile Include="Assets\CrosshairBtn.cs" />
     <Compile Include="Assets\CurrPosition.cs" />
     <Compile Include="Assets\DeactivateForBtn.cs" />
     <Compile Include="Assets\DrawCircle.cs" />

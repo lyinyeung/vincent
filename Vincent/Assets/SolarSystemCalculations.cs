@@ -593,8 +593,8 @@ public class SolarSystemCalculations : MonoBehaviour {
 
 
         // Apparaent diameters
-        sunTr.localScale = new Vector3((float) (sun.dia / 1.7), (float) (sun.dia/1.7) );
-        moonTr.localScale = new Vector3((float)(moon.dia / 2.5), (float)(moon.dia / 2.5));
+        sunTr.localScale = new Vector3((float) (sun.dia / 1.4), (float) (sun.dia/1.4) );
+        moonTr.localScale = new Vector3((float)(moon.dia / 1.4), (float)(moon.dia / 1.4));
         mercuryTr.localScale = new Vector3((float)mercury.diaE , (float)mercury.diaP );
         venusTr.localScale = new Vector3((float)venus.diaE , (float)venus.diaP);
         marsTr.localScale = new Vector3((float)mars.diaE , (float)mars.diaP);
@@ -603,7 +603,7 @@ public class SolarSystemCalculations : MonoBehaviour {
         uranusTr.localScale = new Vector3((float)uranus.diaE, (float)uranus.diaP);
         neptuneTr.localScale = new Vector3((float)neptune.diaE, (float)neptune.diaP);
 
-        moonSha.localScale = new Vector3((float)(moon.dia / 2.5), (float)(moon.dia / 2.5));
+        moonSha.localScale = new Vector3((float)(moon.dia / 1.4), (float)(moon.dia / 1.4));
         mercurySha.localScale = new Vector3((float)mercury.diaE, (float)mercury.diaP);
         venusSha.localScale = new Vector3((float)venus.diaE, (float)venus.diaP);
         marsSha.localScale = new Vector3((float)mars.diaE, (float)mars.diaP);
