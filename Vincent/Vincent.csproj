@@ -93,6 +93,7 @@
     <Compile Include="Assets\DeactivateForBtn.cs" />
     <Compile Include="Assets\DrawCircle.cs" />
     <Compile Include="Assets\DrawConstellations.cs" />
+    <Compile Include="Assets\FPSDisplay.cs" />
     <Compile Include="Assets\FirstPersonCam.cs" />
     <Compile Include="Assets\GyroCamera.cs" />
     <Compile Include="Assets\InfoCanvasScript.cs" />

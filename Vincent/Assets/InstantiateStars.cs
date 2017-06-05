@@ -47,7 +47,7 @@ public class InstantiateStars : MonoBehaviour {
             float y = 0;
             float z = 0;
             float delta = 1;
-            float refSize = 3;
+            float refSize = 2.5f;
             float mag = 0;
             string starName = "";
             Color c = new Color(1,1,1);
@@ -70,8 +70,8 @@ public class InstantiateStars : MonoBehaviour {
                     case 4:
                         mag = float.Parse(field);
                         delta = Mathf.Pow(2.512F,-mag);
-                        
-                       
+                        delta = Mathf.Log(delta + 1.05f, 1.5f);
+
                       //  Debug.Log(blur.transform.GetComponent<Renderer>().material);
                         break;
                     case 5:
@@ -82,7 +82,7 @@ public class InstantiateStars : MonoBehaviour {
                         //   star.LookAt(mainCamera.transform);
 
                         //    star.localScale += new Vector3(delta*refSize, delta * refSize);
-                        blur.localScale += new Vector3(delta * refSize, delta * refSize);
+                        blur.localScale = new Vector3(delta * refSize, delta * refSize);
                         //    blur.localScale += new Vector3(1.5F, 1.5F);
                         //    star.GetComponent<Renderer>().material.color = c;
                         //  c.a = 0.3F;
@@ -210,7 +210,18 @@ public class InstantiateStars : MonoBehaviour {
             b = 0.63 - (0.6 * t * t);
         }
 
-        return new Color((float)r, (float)g, (float)b, 0.7f);
+        Color res = new Color((float)r, (float)g, (float)b, 1f);
+
+        float h;
+        float s;
+        float v;
+
+        Color.RGBToHSV(res, out h, out s, out v);
+
+        res = Color.HSVToRGB(h, s * 1.5f, v,true);
+
+
+        return res;
     }
 
     
@@ -228,7 +239,7 @@ public class InstantiateStars : MonoBehaviour {
         }
         else
         {
-            fov65.SetActive(false);
+            //fov65.SetActive(false);
         }
 
         if (mainCamera.fieldOfView <= 60)
