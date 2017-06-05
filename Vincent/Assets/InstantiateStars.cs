@@ -47,7 +47,7 @@ public class InstantiateStars : MonoBehaviour {
             float y = 0;
             float z = 0;
             float delta = 1;
-            float refSize = 2.5f;
+            float refSize = 2f;
             float mag = 0;
             string starName = "";
             Color c = new Color(1,1,1);

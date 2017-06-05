@@ -181,7 +181,8 @@ public class SolarSystemCalculations : MonoBehaviour {
             double dec = R2D(Mathf.Atan2((float)zEq, Mathf.Sqrt((float)(xEq * xEq + yEq * yEq))));
             dist = r;
             dia = 1919.26 / dist;
-            dia = Mathf.Log((float)dia);
+            dia = dia / 500;
+           // dia = Mathf.Log((float)dia);
             coords = new Coords(ra, dec);
         }
     }
@@ -277,7 +278,7 @@ public class SolarSystemCalculations : MonoBehaviour {
             double dist = Mathf.Sqrt((float)(xGeoRot * xGeoRot + yGeoRot * yGeoRot + zGeoRot * zGeoRot)); // Distance in Earth radii
 
             dia = 1873.7 * 60 / dist;
-            dia = Mathf.Log((float)dia);
+            dia = dia / 500;
 
             elon = R2D(Mathf.Acos(Mathf.Cos((float) D2R(sun.lon - lon)) * Mathf.Cos((float)D2R(lat))));
             double pAngle = 180 - elon; // Phase angle
@@ -444,8 +445,10 @@ public class SolarSystemCalculations : MonoBehaviour {
             elon = R2D(Mathf.Acos((float) ((s * s + dist * dist - r * r) / (2 * s * dist))));
             diaE = d0E / dist;
             diaP = d0P / dist;
-            diaE = Mathf.Log10((float)diaE);
-            diaP = Mathf.Log10((float)diaP);
+            //    diaE = Mathf.Log10((float)diaE);
+            //   diaP = Mathf.Log10((float)diaP);
+            diaE = diaE / 500;
+            diaP = diaP / 500;
 
             mag = ma1 + 5 * Mathf.Log10((float) (r * dist)) + ma2 * pAngle;
             
@@ -593,7 +596,7 @@ public class SolarSystemCalculations : MonoBehaviour {
 
 
         // Apparaent diameters
-        sunTr.localScale = new Vector3((float) (sun.dia / 1.4), (float) (sun.dia/1.4) );
+        sunTr.localScale = new Vector3((float) (sun.dia), (float) (sun.dia) );
         moonTr.localScale = new Vector3((float)(moon.dia / 1.4), (float)(moon.dia / 1.4));
         mercuryTr.localScale = new Vector3((float)mercury.diaE , (float)mercury.diaP );
         venusTr.localScale = new Vector3((float)venus.diaE , (float)venus.diaP);

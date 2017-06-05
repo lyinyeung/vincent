@@ -14,6 +14,7 @@ public class TouchCam : MonoBehaviour
     private float xAngTemp = 0.0f; //temp variable for angle
     private float yAngTemp = 0.0f;
     private GameObject playRot;
+    public Text txt;
 
 
     void Start()
@@ -51,12 +52,21 @@ public class TouchCam : MonoBehaviour
                     //Mainly, about rotate camera. For example, for Screen.width rotate on 180 degree
                     yAngle = yAngTemp - (secondpoint.y - firstpoint.y) * 90.0f / Screen.height;
 
-                    if (yAngle < 0)
-                        yAngle += 360;
-                    if (yAngle > 360)
-                        yAngle -= 360;
+                if (yAngle < 0)
+                {
+                    yAngle += 360;
+               //     yAngle = 0;
 
-                    if (yAngle > 90 && yAngle < 270)
+                }
+                if (yAngle > 360)
+                {
+                    yAngle -= 360;
+          //          yAngle = 0;
+
+                }
+                
+
+                if (yAngle > 90 && yAngle < 270)
                         xAngle = xAngTemp - (secondpoint.x - firstpoint.x) * 180.0f / Screen.width;
                     else
                         xAngle = xAngTemp + (secondpoint.x - firstpoint.x) * 180.0f / Screen.width;
@@ -67,7 +77,14 @@ public class TouchCam : MonoBehaviour
                     if (xAngle > 360)
                         xAngle -= 360;
 
+                if (yAngle > 90 && yAngle < 180)
+                    yAngle = 90;
+
+                if (yAngle < 270 && yAngle > 180) 
+                    yAngle = 270;
+                     
                     transform.rotation = Quaternion.Euler(-yAngle, -xAngle, 0.0f);
+                txt.text = (xAngle.ToString());
 
                 }
             }
