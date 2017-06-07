@@ -84,8 +84,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\ActivTrack.cs" />
     <Compile Include="Assets\BillBoard.cs" />
     <Compile Include="Assets\CSVReader.cs" />
+    <Compile Include="Assets\CamTrackObj.cs" />
     <Compile Include="Assets\CameraMode.cs" />
     <Compile Include="Assets\CameraRaycast.cs" />
     <Compile Include="Assets\CrosshairBtn.cs" />
@@ -109,6 +111,7 @@
     <Compile Include="Assets\SetSize.cs" />
     <Compile Include="Assets\SolarSystemCalculations.cs" />
     <Compile Include="Assets\Starnames.cs" />
+    <Compile Include="Assets\StopTrack.cs" />
     <Compile Include="Assets\SwitchBGmode.cs" />
     <Compile Include="Assets\TouchCam.cs" />
   </ItemGroup>

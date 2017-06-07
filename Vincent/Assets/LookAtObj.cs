@@ -7,8 +7,8 @@ public class LookAtObj : MonoBehaviour {
     public Transform target;
 
     // Use this for initialization
-    void Start () {
-        this.gameObject.transform.LookAt(target);        
+    void Update () {
+        this.transform.LookAt(target);        
 		
 	}
 	

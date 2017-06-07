@@ -811,7 +811,7 @@ public class SolarSystemCalculations : MonoBehaviour {
         if (simSpeedH > 0)
         {
             simStatus.text = "+" + simSpeedH + " h/s";
-            InvokeRepeating("rewindHour", 0.0f, (1 / simSpeedH));
+            InvokeRepeating("advanceHour", 0.0f, (1 / simSpeedH));
         }
         else if (simSpeedH == 0)
         {

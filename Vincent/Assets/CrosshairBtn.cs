@@ -15,6 +15,11 @@ public class CrosshairBtn : MonoBehaviour {
     {
         Button btn = yourButton.GetComponent<Button>();
         btn.onClick.AddListener(TaskOnClick);
+
+        //defaults to off
+        mainCam.GetComponent<CameraRaycast>().enabled = false;
+        nameTxt.text = "";
+        learnBtn.SetActive(false);
     }
 
     void TaskOnClick()

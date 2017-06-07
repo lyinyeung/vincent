@@ -218,7 +218,7 @@ public class InstantiateStars : MonoBehaviour {
 
         Color.RGBToHSV(res, out h, out s, out v);
 
-        res = Color.HSVToRGB(h, s * 1.5f, v,true);
+        res = Color.HSVToRGB(h, s * 2f, v,true);
 
 
         return res;
