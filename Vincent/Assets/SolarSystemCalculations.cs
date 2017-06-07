@@ -450,9 +450,12 @@ public class SolarSystemCalculations : MonoBehaviour {
             diaE = diaE / 500;
             diaP = diaP / 500;
 
-            mag = ma1 + 5 * Mathf.Log10((float) (r * dist)) + ma2 * pAngle;
-            
+            if (name != "Venus" && name != "Mercury")      
+                pAngle = 180;
 
+            mag = ma1 + 5 * Mathf.Log10((float) (r * dist)) + ma2 * pAngle;
+
+        //    Debug.Log(mag);
 
 
             coords = new Coords(ra, dec);
@@ -629,40 +632,82 @@ public class SolarSystemCalculations : MonoBehaviour {
 
 
 
+        float refSize = 1f;
+        float inc = 1.3f;
+        float baselog = 2f;
+        float mag = (float) mercury.mag;
+        float delta = Mathf.Pow(2.512F, -mag);
+        delta = Mathf.Log(delta + inc, baselog);
+        mercurySha.localScale = new Vector3(delta * refSize, delta * refSize);
+
+        mag = (float)venus.mag;
+        delta = Mathf.Pow(2.512F, -mag);
+        delta = Mathf.Log(delta + inc, baselog);
+        venusSha.localScale = new Vector3(delta * refSize, delta * refSize);
+
+        mag = (float)mars.mag;
+        delta = Mathf.Pow(2.512F, -mag);
+        delta = Mathf.Log(delta + inc, baselog);
+        marsSha.localScale = new Vector3(delta * refSize, delta * refSize);
+
+        mag = (float)jupiter.mag;
+        delta = Mathf.Pow(2.512F, -mag);
+        delta = Mathf.Log(delta + inc, baselog);
+        jupiterSha.localScale = new Vector3(delta * refSize, delta * refSize);
+
+        mag = (float)saturn.mag;
+        delta = Mathf.Pow(2.512F, -mag);
+        delta = Mathf.Log(delta + inc, baselog);
+        saturnSha.localScale = new Vector3(delta * refSize, delta * refSize);
+
+        mag = (float)uranus.mag;
+        delta = Mathf.Pow(2.512F, -mag);
+        delta = Mathf.Log(delta + inc, baselog);
+        uranusSha.localScale = new Vector3(delta * refSize, delta * refSize);  
+
+        mag = (float)neptune.mag;
+        delta = Mathf.Pow(2.512F, -mag);
+        delta = Mathf.Log(delta + inc, baselog);
+        neptuneSha.localScale = new Vector3(delta * refSize, delta * refSize);
+
+
+        
+
 
         // Elongation
         Color color = moonSha.GetComponent<Renderer>().material.color;
-        color.a = (float)(1 - moon.elon / 100);
+        float denom = 90;
+        color.a = (float)(1 - moon.elon / 90);
         moonSha.GetComponent<Renderer>().material.color = color;
 
         color = mercurySha.GetComponent<Renderer>().material.color;
-        color.a = (float) (1 - mercury.elon / 100);
+        color.a = (float) (mercury.elon / 90);
         mercurySha.GetComponent<Renderer>().material.color = color;
 
         color = venusSha.GetComponent<Renderer>().material.color;
-        color.a = (float)(1 - venus.elon / 100);
+        color.a = (float)(venus.elon / 90);
         venusSha.GetComponent<Renderer>().material.color = color;
 
         color = marsSha.GetComponent<Renderer>().material.color;
-        color.a = (float)(1 - mars.elon / 100);
+        color.a = (float)(mars.elon / 90);
         marsSha.GetComponent<Renderer>().material.color = color;
 
         color = jupiterSha.GetComponent<Renderer>().material.color;
-        color.a = (float)(1 - jupiter.elon / 100);
+        color.a = (float)(jupiter.elon / 90);
         jupiterSha.GetComponent<Renderer>().material.color = color;
 
         color = saturnSha.GetComponent<Renderer>().material.color;
-        color.a = (float)(1 - saturn.elon / 100);
+        color.a = (float)(saturn.elon / 90);
         saturnSha.GetComponent<Renderer>().material.color = color;
 
         color = uranusSha.GetComponent<Renderer>().material.color;
-        color.a = (float)(1 - uranus.elon / 120);
+        color.a = (float)(uranus.elon / 90);
         uranusSha.GetComponent<Renderer>().material.color = color;
 
         color = neptuneSha.GetComponent<Renderer>().material.color;
-        color.a = (float)(1 - neptune.elon / 120);
+        color.a = (float)(neptune.elon / 90);
         neptuneSha.GetComponent<Renderer>().material.color = color;
-
+        
 
     }
 
