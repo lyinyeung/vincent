@@ -180,9 +180,10 @@ public class SolarSystemCalculations : MonoBehaviour {
             double ra = R2D(Mathf.Atan2((float)yEq, (float)xEq));
             double dec = R2D(Mathf.Atan2((float)zEq, Mathf.Sqrt((float)(xEq * xEq + yEq * yEq))));
             dist = r;
-            dia = 1919.26 / dist;
-            dia = dia / 500;
-           // dia = Mathf.Log((float)dia);
+            dia = 1919.26 / dist; //in arcseconds
+            dia = dia / 60;
+            // dia = Mathf.Log((float)dia);
+            Debug.Log(dia);
             coords = new Coords(ra, dec);
         }
     }
@@ -239,8 +240,7 @@ public class SolarSystemCalculations : MonoBehaviour {
             double elong = lM - lS; // Moon mean elongation
             double f = lM - n; // Moon argument of latitude
 
-            // Pertubations
-            
+            // Pertubations        
             lon += -1.274 * Mathf.Sin((float)D2R(M - 2 * elong))
                 + 0.658 * Mathf.Sin((float)D2R(2 * elong))
                 - 0.186 * Mathf.Sin((float)D2R(mS))
@@ -263,6 +263,7 @@ public class SolarSystemCalculations : MonoBehaviour {
             r += -0.58 * Mathf.Cos((float)D2R(M - 2 * elong))
                 - 0.46 * Mathf.Cos((float)D2R(2 * elong));
 
+
             xEcl = r * Mathf.Cos((float)D2R(lon)) * Mathf.Cos((float)D2R(lat));
             yEcl = r * Mathf.Sin((float)D2R(lon)) * Mathf.Cos((float)D2R(lat));
             zEcl = r * Mathf.Sin((float)D2R(lat));
@@ -278,7 +279,8 @@ public class SolarSystemCalculations : MonoBehaviour {
             double dist = Mathf.Sqrt((float)(xGeoRot * xGeoRot + yGeoRot * yGeoRot + zGeoRot * zGeoRot)); // Distance in Earth radii
 
             dia = 1873.7 * 60 / dist;
-            dia = dia / 500;
+            dia = dia / 60;
+            Debug.Log(dia);
 
             elon = R2D(Mathf.Acos(Mathf.Cos((float) D2R(sun.lon - lon)) * Mathf.Cos((float)D2R(lat))));
             double pAngle = 180 - elon; // Phase angle
@@ -447,15 +449,15 @@ public class SolarSystemCalculations : MonoBehaviour {
             diaP = d0P / dist;
             //    diaE = Mathf.Log10((float)diaE);
             //   diaP = Mathf.Log10((float)diaP);
-            diaE = diaE / 500;
-            diaP = diaP / 500;
+            diaE = diaE / 60;
+            diaP = diaP / 60;
 
             if (name != "Venus" && name != "Mercury")      
                 pAngle = 180;
 
             mag = ma1 + 5 * Mathf.Log10((float) (r * dist)) + ma2 * pAngle;
 
-        //    Debug.Log(mag);
+            Debug.Log(diaE);
 
 
             coords = new Coords(ra, dec);
@@ -582,7 +584,7 @@ public class SolarSystemCalculations : MonoBehaviour {
         uranusObj.transform.localPosition = sph2Cart(uranus.coords.ra, uranus.coords.dec, 499 + uranus.dist / 20);
         neptuneObj.transform.localPosition = sph2Cart(neptune.coords.ra, neptune.coords.dec, 499 + neptune.dist / 20);
 
-        
+
 
 
         //moonShadow.localScale = new Vector3(0, 0);
@@ -599,24 +601,26 @@ public class SolarSystemCalculations : MonoBehaviour {
 
 
         // Apparaent diameters
-        sunTr.localScale = new Vector3((float) (sun.dia), (float) (sun.dia) );
-        moonTr.localScale = new Vector3((float)(moon.dia / 1.4), (float)(moon.dia / 1.4));
-        mercuryTr.localScale = new Vector3((float)mercury.diaE , (float)mercury.diaP );
-        venusTr.localScale = new Vector3((float)venus.diaE , (float)venus.diaP);
-        marsTr.localScale = new Vector3((float)mars.diaE , (float)mars.diaP);
-        jupiterTr.localScale = new Vector3((float)jupiter.diaE , (float)jupiter.diaP);
-        saturnTr.localScale = new Vector3((float)saturn.diaE , (float)saturn.diaP);
-        uranusTr.localScale = new Vector3((float)uranus.diaE, (float)uranus.diaP);
-        neptuneTr.localScale = new Vector3((float)neptune.diaE, (float)neptune.diaP);
+        float norm = 3.0f; // normalizing scale factor
 
-        moonSha.localScale = new Vector3((float)(moon.dia / 1.4), (float)(moon.dia / 1.4));
-        mercurySha.localScale = new Vector3((float)mercury.diaE, (float)mercury.diaP);
-        venusSha.localScale = new Vector3((float)venus.diaE, (float)venus.diaP);
-        marsSha.localScale = new Vector3((float)mars.diaE, (float)mars.diaP);
-        jupiterSha.localScale = new Vector3((float)jupiter.diaE, (float)jupiter.diaP);
-        saturnSha.localScale = new Vector3((float)saturn.diaE, (float)saturn.diaP);
-        uranusSha.localScale = new Vector3((float)uranus.diaE, (float)uranus.diaP);
-        neptuneSha.localScale = new Vector3((float)neptune.diaE, (float)neptune.diaP);
+        sunTr.localScale = new Vector3((float) (sun.dia/4), (float) (sun.dia/4) );
+        moonTr.localScale = new Vector3((float)(moon.dia/4), (float)(moon.dia/4));
+        mercuryTr.localScale = new Vector3((float)mercury.diaE/norm , (float)mercury.diaP / norm);
+        venusTr.localScale = new Vector3((float)venus.diaE / norm, (float)venus.diaP / norm);
+        marsTr.localScale = new Vector3((float)mars.diaE / norm, (float)mars.diaP / norm);
+        jupiterTr.localScale = new Vector3((float)jupiter.diaE / norm, (float)jupiter.diaP) / norm;
+        saturnTr.localScale = new Vector3((float)saturn.diaE / norm, (float)saturn.diaP / norm);
+        uranusTr.localScale = new Vector3((float)uranus.diaE / norm, (float)uranus.diaP / norm);
+        neptuneTr.localScale = new Vector3((float)neptune.diaE / norm, (float)neptune.diaP / norm);
+
+        moonSha.localScale = new Vector3((float)(moon.dia/4.5), (float)(moon.dia/4.5));
+        mercurySha.localScale = new Vector3((float)mercury.diaE / norm, (float)mercury.diaP / norm);
+        venusSha.localScale = new Vector3((float)venus.diaE / norm, (float)venus.diaP);
+        marsSha.localScale = new Vector3((float)mars.diaE / norm, (float)mars.diaP);
+        jupiterSha.localScale = new Vector3((float)jupiter.diaE / norm, (float)jupiter.diaP / norm);
+        saturnSha.localScale = new Vector3((float)saturn.diaE / norm, (float)saturn.diaP / norm);
+        uranusSha.localScale = new Vector3((float)uranus.diaE / norm, (float)uranus.diaP / norm);
+        neptuneSha.localScale = new Vector3((float)neptune.diaE / norm, (float)neptune.diaP / norm);
 
 
         // Billboarding
