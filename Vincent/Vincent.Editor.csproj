@@ -134,7 +134,7 @@
     <Compile Include="Assets\Octahedron Sphere\Editor\OctahedronSphereWizard.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\ExampleCSV.txt" />
+    <None Include="Assets\Databases\ExampleCSV.txt" />
     <None Include="Assets\Standard Assets\Cameras\CameraGuidelines.txt" />
     <None Include="Assets\Standard Assets\CrossPlatformInput\CrossPlatformInputGuidelines.txt" />
   </ItemGroup>
