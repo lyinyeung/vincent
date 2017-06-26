@@ -187,7 +187,6 @@ public class SolarSystemCalculations : MonoBehaviour {
             dist = r;
             dia = 1919.26 / dist; //in arcseconds
             dia = dia / 60;
-            // dia = Mathf.Log((float)dia);
 
             /*
             ra = Rev(ra);
@@ -201,7 +200,7 @@ public class SolarSystemCalculations : MonoBehaviour {
             float secor = (float)((rar - degrr - ((float)minur / 60)) * 3600);
             System.IO.File.AppendAllText("C:\\Users\\bun\\Desktop\\DebugData2.txt", degrr + " " + Mathf.Abs((float)minur) + " " + Mathf.Abs((float)secor) + " ");
             System.IO.File.AppendAllText("C:\\Users\\bun\\Desktop\\DebugData2.txt", degrd + " " + Mathf.Abs((float)minud) + " " + Mathf.Abs((float)secod) + Environment.NewLine);*/
-//            Debug.Log(ra);
+
 
             coords = new Coords(ra, dec);
         }
@@ -300,7 +299,6 @@ public class SolarSystemCalculations : MonoBehaviour {
 
             dia = 1873.7 * 60 / dist;
             dia = dia / 60;
-    //        Debug.Log(dia);
 
             elon = R2D(Mathf.Acos(Mathf.Cos((float) D2R(sun.lon - lon)) * Mathf.Cos((float)D2R(lat))));
             double pAngle = 180 - elon; // Phase angle
@@ -322,8 +320,6 @@ public class SolarSystemCalculations : MonoBehaviour {
             {
                 lst += 24;
             }
-
-            Debug.Log(phase);
 
             double hourAngle = Rev(lst*15 - ra);
             double auxg = R2D(Mathf.Atan(Mathf.Tan((float)D2R(gclat)) / Mathf.Cos((float)D2R(hourAngle))));
@@ -351,8 +347,6 @@ public class SolarSystemCalculations : MonoBehaviour {
 
             topoCoords = new Coords(topRA, topDec);
             coords = new Coords(ra, dec);
-       //     Debug.Log(topRA);
-         //   Debug.Log(topDec);
         }
 
     }
@@ -497,8 +491,6 @@ public class SolarSystemCalculations : MonoBehaviour {
 
             mag = ma1 + 5 * Mathf.Log10((float) (r * dist)) + ma2 * pAngle;
 
-            //           Debug.Log(diaE);
-
 
 
             ra = Rev(ra);
@@ -621,22 +613,6 @@ public class SolarSystemCalculations : MonoBehaviour {
          d,
          62.2, 60.9,
          -6.9, 0.001);
-        // t.text = (sun.coords.ra).ToString();
-
-
-        // Debug info
-        /*
-        System.IO.File.AppendAllText("C:\\Users\\bun\\Desktop\\DebugData.txt", "Sun: " + sun.coords.ra + " " + sun.coords.dec + Environment.NewLine);
-        System.IO.File.AppendAllText("C:\\Users\\bun\\Desktop\\DebugData.txt", "Moon: " + moon.coords.ra + " " + moon.coords.dec + Environment.NewLine);
-        System.IO.File.AppendAllText("C:\\Users\\bun\\Desktop\\DebugData.txt", "Mercury: " + mercury.coords.ra + " " + mercury.coords.dec + " " + mercury.mag + Environment.NewLine);
-        System.IO.File.AppendAllText("C:\\Users\\bun\\Desktop\\DebugData.txt", "Venus: " + venus.coords.ra + " " + venus.coords.dec + " " + venus.mag + Environment.NewLine);
-        System.IO.File.AppendAllText("C:\\Users\\bun\\Desktop\\DebugData.txt", "mars: " + mars.coords.ra + " " + mars.coords.dec + " " + mars.mag + Environment.NewLine);
-        System.IO.File.AppendAllText("C:\\Users\\bun\\Desktop\\DebugData.txt", "jupiter: " + jupiter.coords.ra + " " + jupiter.coords.dec + " " + jupiter.mag + Environment.NewLine);
-        System.IO.File.AppendAllText("C:\\Users\\bun\\Desktop\\DebugData.txt", "saturn: " + saturn.coords.ra + " " + saturn.coords.dec + " " + saturn.mag + Environment.NewLine);
-        System.IO.File.AppendAllText("C:\\Users\\bun\\Desktop\\DebugData.txt", "uranus: " + uranus.coords.ra + " " + uranus.coords.dec + " " + uranus.mag + Environment.NewLine);
-        System.IO.File.AppendAllText("C:\\Users\\bun\\Desktop\\DebugData.txt", "neptune: " + neptune.coords.ra + " " + neptune.coords.dec + " " + neptune.mag + Environment.NewLine);
-        System.IO.File.AppendAllText("C:\\Users\\bun\\Desktop\\DebugData.txt", Environment.NewLine);
-        */
 
 
 
@@ -836,10 +812,6 @@ public class SolarSystemCalculations : MonoBehaviour {
     void gpsLocationMode()
     {
         topocentric = true;
-        //  Input.location.Start();
-        //   Debug.Log(Input.location.isEnabledByUser);
-   //     currLocTxt.text = Input.location.status.ToString();
-   //     yield return new WaitForSeconds(5);
         devLat = Input.location.lastData.latitude;
         devLon = Input.location.lastData.longitude;
         instantiateSolarSystem(currentD);
@@ -858,8 +830,6 @@ public class SolarSystemCalculations : MonoBehaviour {
     void setNewTime() // Updates solar system to inputted time
     {
         double d = dayNumber(Convert.ToInt32(yearIn.text), Convert.ToInt32(monthIn.text), Convert.ToInt32(dayIn.text), Convert.ToDouble(timeIn.text));
-     //   Debug.Log((Int32)((Convert.ToDouble(timeIn.text) % 1) * 60));
-        //currentTime.Year = yearIn.text;
         currentTime = new DateTime(Convert.ToInt32(yearIn.text), Convert.ToInt32(monthIn.text), Convert.ToInt32(dayIn.text),
             (Int32)Convert.ToDouble(timeIn.text),(Int32) ((Convert.ToDouble(timeIn.text) % 1) * 60), 0);
         currentD = d;
@@ -875,7 +845,6 @@ public class SolarSystemCalculations : MonoBehaviour {
     void advanceDayInv()
     {
         simSpeedH += 24;
-        //simSpeedD++;
         simStatus.text = "+" + simSpeedH + " h/s";
         CancelInvoke();
         if (simSpeedH > 0)
@@ -892,7 +861,6 @@ public class SolarSystemCalculations : MonoBehaviour {
             simStatus.text = simSpeedH + " h/s";
             InvokeRepeating("rewindHour", 0.0f, Mathf.Abs((1 / simSpeedH)));
         }
-       //     InvokeRepeating("advanceHour", 0.0f, (1 / simSpeedH));
     }
 
 
@@ -906,7 +874,6 @@ public class SolarSystemCalculations : MonoBehaviour {
     {
         simSpeedD = 0;
         simSpeedH++;
-     //   simStatus.text = "+" + simSpeedH + " h/s";
         CancelInvoke();
         if (simSpeedH > 0)
         {
@@ -922,7 +889,6 @@ public class SolarSystemCalculations : MonoBehaviour {
             simStatus.text = simSpeedH + " h/s";
             InvokeRepeating("rewindHour", 0.0f, Mathf.Abs((1 / simSpeedH)));
         }
-       // InvokeRepeating("advanceHour", 0.0f, (1 / simSpeedH));
     }
 
     void rewindHour()
@@ -950,13 +916,11 @@ public class SolarSystemCalculations : MonoBehaviour {
             InvokeRepeating("rewindHour", 0.0f, Mathf.Abs((1 / simSpeedH)));
         }
         
-      //  InvokeRepeating("advanceHour", 0.0f, (1 / simSpeedH));
     }
 
     void rewindDayInv()
     {
         simSpeedH -= 24;
-        //simSpeedD++;
         simStatus.text = "+" + simSpeedH + " h/s";
         CancelInvoke();
         if (simSpeedH > 0)
@@ -973,7 +937,6 @@ public class SolarSystemCalculations : MonoBehaviour {
             simStatus.text = simSpeedH + " h/s";
             InvokeRepeating("rewindHour", 0.0f, Mathf.Abs((1 / simSpeedH)));
         }
-        //     InvokeRepeating("advanceHour", 0.0f, (1 / simSpeedH));
     }
 
     void stopTime()
@@ -1047,9 +1010,8 @@ public class SolarSystemCalculations : MonoBehaviour {
     void Update()
     {
         currentTimeTxt.text = currentTime.Day + "/" + currentTime.Month + "/" + currentTime.Year + "  " + currentTime.Hour.ToString("D2") + ":" + currentTime.Minute.ToString("D2");
-       //northTxt.text = (Input.location.status == LocationServiceStatus.Running).ToString();
 
-        southTxt.text = Rev(Input.compass.trueHeading - 180).ToString("F0");
+        southTxt.text ="Angle from south: " + Rev(Input.compass.trueHeading - 180).ToString("F0");
        
 
         if (topocentric)

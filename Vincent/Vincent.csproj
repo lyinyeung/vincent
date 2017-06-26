@@ -98,6 +98,7 @@
     <Compile Include="Assets\Scripts\FPSDisplay.cs" />
     <Compile Include="Assets\Scripts\FirstPersonCam.cs" />
     <Compile Include="Assets\Scripts\GyroCamera.cs" />
+    <Compile Include="Assets\Scripts\GyroMode.cs" />
     <Compile Include="Assets\Scripts\InfoCanvasScript.cs" />
     <Compile Include="Assets\Scripts\InstantiateSphereGrid.cs" />
     <Compile Include="Assets\Scripts\InstantiateStars.cs" />
@@ -115,6 +116,7 @@
     <Compile Include="Assets\Scripts\StopTrack.cs" />
     <Compile Include="Assets\Scripts\SwitchBGmode.cs" />
     <Compile Include="Assets\Scripts\TouchCam.cs" />
+    <Compile Include="Assets\Scripts\TouchMode.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Databases\ExampleCSV.txt" />

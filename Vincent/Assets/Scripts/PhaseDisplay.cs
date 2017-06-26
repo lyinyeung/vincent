@@ -29,8 +29,7 @@ public class PhaseDisplay : MonoBehaviour {
         {
             currentPhase = solarSystem.moonPhase;
             currentPhaseInt = (int) Mathf.Round((float) currentPhase * 10);
-
-            Debug.Log(currentPhaseInt);
+            
             if (currentPhaseInt >= 0)
             {
 

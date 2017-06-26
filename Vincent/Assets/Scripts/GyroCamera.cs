@@ -22,7 +22,7 @@ public class GyroCamera : MonoBehaviour
 
     void OnGUI()
     {
-        if (GUILayout.Button("Calibrate", GUILayout.Width(300), GUILayout.Height(100)))
+        if (GUILayout.Button("Calibrate South", GUILayout.Width(250), GUILayout.Height(100)))
         {
             CalibrateYAngle();
         }
