@@ -13,6 +13,7 @@ public class LocationCalibration : MonoBehaviour {
     public Transform rotation_1;
     public Transform rotation_2;
     public Transform rotation_3;
+    public DrawConstellations drawConst;
     public SolarSystemCalculations solarSystem;
 
     // Use this for initialization
@@ -29,9 +30,12 @@ public class LocationCalibration : MonoBehaviour {
     void performRotations()
     {
         resetRotations();
-        Debug.Log(solarSystem.lst *15);
-        rotation_2.Rotate(new Vector3(0,((float)solarSystem.lst * 15), 0)); // adjust for local sidereal time
-        rotation_3.Rotate(new Vector3((float)Convert.ToDouble(latIn.text) - 90, 0, 0)); // adjust for latitude
+        rotation_2.Rotate(new Vector3(0f,((float)solarSystem.lst * 15), 0f)); // adjust for local sidereal time
+        rotation_3.Rotate(new Vector3((float)Convert.ToDouble(latIn.text) - 90, 0f, 0f)); // adjust for latitude
+        Quaternion rot1 = Quaternion.Euler(0f, ((float)solarSystem.lst * 15), 0f);
+        Quaternion rot2 = Quaternion.Euler((float)Convert.ToDouble(latIn.text) - 90, 0f, 0f);
+        Quaternion rot3 = Quaternion.Euler(0f, 0f, 0f);
+        drawConst.InstantiateConstellations(rot1, rot2, rot3);
     }
 
     void resetRotations()
@@ -41,6 +45,11 @@ public class LocationCalibration : MonoBehaviour {
         rotation_1.rotation = Quaternion.identity;
         rotation_1.Rotate(0, -89.5f, 0);
 
-    }
+        /*
+        Quaternion rot1 = Quaternion.Euler(0, 0, 0);
+        Quaternion rot2 = Quaternion.Euler(0, 0, 0);
+        Quaternion rot3 = Quaternion.Euler(0, 0, 0);
+        drawConst.InstantiateConstellations(rot1, rot2, rot3);*/
 
+    }
 }
