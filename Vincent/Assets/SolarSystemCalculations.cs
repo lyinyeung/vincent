@@ -74,9 +74,11 @@ public class SolarSystemCalculations : MonoBehaviour {
     public Transform uranusSha;
     public Transform neptuneSha;
 
+    // UI display
     public Text currentTimeTxt;
     public DateTime currentTime;
-    
+
+    public double moonPhase = 0;
 
     public double currentD; // Current day number
 
@@ -302,7 +304,7 @@ public class SolarSystemCalculations : MonoBehaviour {
 
             elon = R2D(Mathf.Acos(Mathf.Cos((float) D2R(sun.lon - lon)) * Mathf.Cos((float)D2R(lat))));
             double pAngle = 180 - elon; // Phase angle
-            phase = (1 + Mathf.Cos((float)D2R(pAngle))) / 2;
+            phase = Mathf.Sign((float)(lon - sun.lon)) * (1 + Mathf.Cos((float)D2R(pAngle))) / 2;
 
             // Topocentric calculations
             double mpar = R2D(Mathf.Asin((float) (1 / dist)));
@@ -321,14 +323,13 @@ public class SolarSystemCalculations : MonoBehaviour {
                 lst += 24;
             }
 
-            Debug.Log(lst);
+            Debug.Log(phase);
 
             double hourAngle = Rev(lst*15 - ra);
             double auxg = R2D(Mathf.Atan(Mathf.Tan((float)D2R(gclat)) / Mathf.Cos((float)D2R(hourAngle))));
 
             double topRA = ra - mpar * rho * Mathf.Cos((float)D2R(gclat)) * Mathf.Sin((float)D2R(hourAngle)) / Mathf.Cos((float)D2R(dec));
             double topDec = dec - mpar * rho * Mathf.Sin((float)D2R(gclat)) * Mathf.Sin((float)D2R(auxg - dec)) / Mathf.Sin((float)D2R(auxg));
-
             
          
             ra = Rev(ra);
@@ -661,6 +662,8 @@ public class SolarSystemCalculations : MonoBehaviour {
 
         // Set new lst
         lst = moon.lst;
+        // Set new moon phase
+        moonPhase = moon.phase;
 
 
 

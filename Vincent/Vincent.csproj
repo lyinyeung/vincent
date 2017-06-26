@@ -107,6 +107,7 @@
     <Compile Include="Assets\Octahedron Sphere\OctahedronSphereCreator.cs" />
     <Compile Include="Assets\Octahedron Sphere\OctahedronSphereTester.cs" />
     <Compile Include="Assets\OpenURL.cs" />
+    <Compile Include="Assets\PhaseDisplay.cs" />
     <Compile Include="Assets\PinchZoom.cs" />
     <Compile Include="Assets\ReadDemo.cs" />
     <Compile Include="Assets\ReverseNormals.cs" />
