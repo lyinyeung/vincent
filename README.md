@@ -2,6 +2,6 @@
 
 Individual Project BEng archive 2016-2017  
 Lai Yin Yeung lyy14  
-Supervisor: Dr. Steffan Van Bakel  
+Supervisor: Dr. Steffen Van Bakel  
 
 
