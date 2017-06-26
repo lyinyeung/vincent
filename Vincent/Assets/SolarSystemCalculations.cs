@@ -37,6 +37,9 @@ public class SolarSystemCalculations : MonoBehaviour {
     public Button geoBtn;
     public Button gpsBtn;
     public Text currLocTxt;
+    // Horizontal calibration
+    public double lst = 0;    // current local sidereal time
+    public Text southTxt;     // current angle from noth
 
 
     // Parent objects
@@ -121,7 +124,7 @@ public class SolarSystemCalculations : MonoBehaviour {
         Button gpsbtn = gpsBtn.GetComponent<Button>();
         gpsbtn.onClick.AddListener(gpsLocationMode);
 
-
+        Input.compass.enabled = true;
         Input.location.Start();
         
 
@@ -183,7 +186,21 @@ public class SolarSystemCalculations : MonoBehaviour {
             dia = 1919.26 / dist; //in arcseconds
             dia = dia / 60;
             // dia = Mathf.Log((float)dia);
-            Debug.Log(dia);
+
+            /*
+            ra = Rev(ra);
+            int degrd = (int)dec / 1;
+            int minud = (int)((dec - degrd) * 60) / 1;
+            float secod = (float)((dec - degrd - ((float)minud / 60)) * 3600);
+
+            float rar = (float)ra / 15;
+            int degrr = (int)rar / 1;
+            int minur = (int)((rar - degrr) * 60) / 1;
+            float secor = (float)((rar - degrr - ((float)minur / 60)) * 3600);
+            System.IO.File.AppendAllText("C:\\Users\\bun\\Desktop\\DebugData2.txt", degrr + " " + Mathf.Abs((float)minur) + " " + Mathf.Abs((float)secor) + " ");
+            System.IO.File.AppendAllText("C:\\Users\\bun\\Desktop\\DebugData2.txt", degrd + " " + Mathf.Abs((float)minud) + " " + Mathf.Abs((float)secod) + Environment.NewLine);*/
+//            Debug.Log(ra);
+
             coords = new Coords(ra, dec);
         }
     }
@@ -203,6 +220,7 @@ public class SolarSystemCalculations : MonoBehaviour {
         public double dia;    // Apparent diameter
         public double phase;  // Phase
         public double elon;   // Elongation
+        public double lst;    // Local Sidereal Time
 
 
 
@@ -280,7 +298,7 @@ public class SolarSystemCalculations : MonoBehaviour {
 
             dia = 1873.7 * 60 / dist;
             dia = dia / 60;
-            Debug.Log(dia);
+    //        Debug.Log(dia);
 
             elon = R2D(Mathf.Acos(Mathf.Cos((float) D2R(sun.lon - lon)) * Mathf.Cos((float)D2R(lat))));
             double pAngle = 180 - elon; // Phase angle
@@ -293,7 +311,7 @@ public class SolarSystemCalculations : MonoBehaviour {
             double rho = 0.99833 + 0.00167 * Mathf.Cos((float)(2 * D2R((lata))));
 
             double gmst0 = Rev((sun.meanL + 180)) / 15;
-            double lst = gmst0 + ut + longa / 15; // Local sidereal time
+            lst = gmst0 + ut + longa / 15; // Local sidereal time
             if (lst > 24)
             {
                 lst -= 24;
@@ -302,12 +320,33 @@ public class SolarSystemCalculations : MonoBehaviour {
             {
                 lst += 24;
             }
+
+            Debug.Log(lst);
+
             double hourAngle = Rev(lst*15 - ra);
             double auxg = R2D(Mathf.Atan(Mathf.Tan((float)D2R(gclat)) / Mathf.Cos((float)D2R(hourAngle))));
 
             double topRA = ra - mpar * rho * Mathf.Cos((float)D2R(gclat)) * Mathf.Sin((float)D2R(hourAngle)) / Mathf.Cos((float)D2R(dec));
             double topDec = dec - mpar * rho * Mathf.Sin((float)D2R(gclat)) * Mathf.Sin((float)D2R(auxg - dec)) / Mathf.Sin((float)D2R(auxg));
- 
+
+            
+         
+            ra = Rev(ra);
+            topRA = Rev(topRA);
+            /*
+            int degrd = (int) topDec / 1;
+            int minud = (int)((topDec - degrd) * 60) / 1;
+            float secod = (float)((topDec - degrd - ((float)minud / 60)) * 3600);
+
+            float rar = (float)topRA / 15;
+            int degrr = (int)rar / 1;
+            int minur = (int)((rar - degrr) * 60) / 1;
+            float secor = (float)((rar - degrr - ((float)minur / 60)) * 3600);
+            System.IO.File.AppendAllText("C:\\Users\\bun\\Desktop\\DebugData2.txt", degrr + " " + Mathf.Abs((float)minur) + " " + Mathf.Abs((float)secor) + " ");
+            System.IO.File.AppendAllText("C:\\Users\\bun\\Desktop\\DebugData2.txt", degrd + " " + Mathf.Abs((float)minud) + " " + Mathf.Abs((float)secod) + Environment.NewLine);
+            Debug.Log(ra); 
+            */
+
 
             topoCoords = new Coords(topRA, topDec);
             coords = new Coords(ra, dec);
@@ -457,7 +496,27 @@ public class SolarSystemCalculations : MonoBehaviour {
 
             mag = ma1 + 5 * Mathf.Log10((float) (r * dist)) + ma2 * pAngle;
 
-            Debug.Log(diaE);
+            //           Debug.Log(diaE);
+
+
+
+            ra = Rev(ra);
+            /*
+            if (name == "Venus")
+            {
+                int degrd = (int)dec / 1;
+                int minud = (int)((dec - degrd) * 60) / 1;
+                float secod = (float)((dec - degrd - ((float)minud / 60)) * 3600);
+
+                float rar = (float)ra / 15;
+                int degrr = (int)rar / 1;
+                int minur = (int)((rar - degrr) * 60) / 1;
+                float secor = (float)((rar - degrr - ((float)minur / 60)) * 3600);
+                System.IO.File.AppendAllText("C:\\Users\\bun\\Desktop\\DebugData2.txt", degrr + " " + Mathf.Abs((float)minur) + " " + Mathf.Abs((float)secor) + " ");
+                System.IO.File.AppendAllText("C:\\Users\\bun\\Desktop\\DebugData2.txt", degrd + " " + Mathf.Abs((float)minud) + " " + Mathf.Abs((float)secod) + Environment.NewLine);
+                Debug.Log(ra);
+            }
+            */
 
 
             coords = new Coords(ra, dec);
@@ -564,6 +623,21 @@ public class SolarSystemCalculations : MonoBehaviour {
         // t.text = (sun.coords.ra).ToString();
 
 
+        // Debug info
+        /*
+        System.IO.File.AppendAllText("C:\\Users\\bun\\Desktop\\DebugData.txt", "Sun: " + sun.coords.ra + " " + sun.coords.dec + Environment.NewLine);
+        System.IO.File.AppendAllText("C:\\Users\\bun\\Desktop\\DebugData.txt", "Moon: " + moon.coords.ra + " " + moon.coords.dec + Environment.NewLine);
+        System.IO.File.AppendAllText("C:\\Users\\bun\\Desktop\\DebugData.txt", "Mercury: " + mercury.coords.ra + " " + mercury.coords.dec + " " + mercury.mag + Environment.NewLine);
+        System.IO.File.AppendAllText("C:\\Users\\bun\\Desktop\\DebugData.txt", "Venus: " + venus.coords.ra + " " + venus.coords.dec + " " + venus.mag + Environment.NewLine);
+        System.IO.File.AppendAllText("C:\\Users\\bun\\Desktop\\DebugData.txt", "mars: " + mars.coords.ra + " " + mars.coords.dec + " " + mars.mag + Environment.NewLine);
+        System.IO.File.AppendAllText("C:\\Users\\bun\\Desktop\\DebugData.txt", "jupiter: " + jupiter.coords.ra + " " + jupiter.coords.dec + " " + jupiter.mag + Environment.NewLine);
+        System.IO.File.AppendAllText("C:\\Users\\bun\\Desktop\\DebugData.txt", "saturn: " + saturn.coords.ra + " " + saturn.coords.dec + " " + saturn.mag + Environment.NewLine);
+        System.IO.File.AppendAllText("C:\\Users\\bun\\Desktop\\DebugData.txt", "uranus: " + uranus.coords.ra + " " + uranus.coords.dec + " " + uranus.mag + Environment.NewLine);
+        System.IO.File.AppendAllText("C:\\Users\\bun\\Desktop\\DebugData.txt", "neptune: " + neptune.coords.ra + " " + neptune.coords.dec + " " + neptune.mag + Environment.NewLine);
+        System.IO.File.AppendAllText("C:\\Users\\bun\\Desktop\\DebugData.txt", Environment.NewLine);
+        */
+
+
 
         // Positioning
         sunObj.transform.localPosition = sph2Cart(sun.coords.ra, sun.coords.dec, 499 + (sun.dist / 20));
@@ -585,26 +659,19 @@ public class SolarSystemCalculations : MonoBehaviour {
         neptuneObj.transform.localPosition = sph2Cart(neptune.coords.ra, neptune.coords.dec, 499 + neptune.dist / 20);
 
 
+        // Set new lst
+        lst = moon.lst;
 
 
-        //moonShadow.localScale = new Vector3(0, 0);
-        /*
-        Debug.Log(sun.dia);
-        Debug.Log(moon.elon);
-        Debug.Log(mercury.elon);
-        Debug.Log(venus.elon);
-        Debug.Log(mars.elon);
-        Debug.Log(jupiter.elon);
-        Debug.Log(uranus.elon);
-        Debug.Log(neptune.elon);*/
+
 
 
 
         // Apparaent diameters
-        float norm = 3.0f; // normalizing scale factor
+        float norm = 8.0f; // normalizing scale factor
 
-        sunTr.localScale = new Vector3((float) (sun.dia/4), (float) (sun.dia/4) );
-        moonTr.localScale = new Vector3((float)(moon.dia/4), (float)(moon.dia/4));
+        sunTr.localScale = new Vector3((float) (sun.dia/10), (float) (sun.dia/10) );
+        moonTr.localScale = new Vector3((float)(moon.dia/10), (float)(moon.dia/10));
         mercuryTr.localScale = new Vector3((float)mercury.diaE/norm , (float)mercury.diaP / norm);
         venusTr.localScale = new Vector3((float)venus.diaE / norm, (float)venus.diaP / norm);
         marsTr.localScale = new Vector3((float)mars.diaE / norm, (float)mars.diaP / norm);
@@ -612,15 +679,16 @@ public class SolarSystemCalculations : MonoBehaviour {
         saturnTr.localScale = new Vector3((float)saturn.diaE / norm, (float)saturn.diaP / norm);
         uranusTr.localScale = new Vector3((float)uranus.diaE / norm, (float)uranus.diaP / norm);
         neptuneTr.localScale = new Vector3((float)neptune.diaE / norm, (float)neptune.diaP / norm);
-
-        moonSha.localScale = new Vector3((float)(moon.dia/4.5), (float)(moon.dia/4.5));
+        
+        
+        moonSha.localScale = new Vector3((float)(moon.dia/10), (float)(moon.dia/10));
         mercurySha.localScale = new Vector3((float)mercury.diaE / norm, (float)mercury.diaP / norm);
-        venusSha.localScale = new Vector3((float)venus.diaE / norm, (float)venus.diaP);
-        marsSha.localScale = new Vector3((float)mars.diaE / norm, (float)mars.diaP);
+        venusSha.localScale = new Vector3((float)venus.diaE / norm, (float)venus.diaP / norm);
+        marsSha.localScale = new Vector3((float)mars.diaE / norm, (float)mars.diaP / norm);
         jupiterSha.localScale = new Vector3((float)jupiter.diaE / norm, (float)jupiter.diaP / norm);
         saturnSha.localScale = new Vector3((float)saturn.diaE / norm, (float)saturn.diaP / norm);
         uranusSha.localScale = new Vector3((float)uranus.diaE / norm, (float)uranus.diaP / norm);
-        neptuneSha.localScale = new Vector3((float)neptune.diaE / norm, (float)neptune.diaP / norm);
+        neptuneSha.localScale = new Vector3((float)neptune.diaE / norm, (float)neptune.diaP / norm); 
 
 
         // Billboarding
@@ -636,6 +704,7 @@ public class SolarSystemCalculations : MonoBehaviour {
 
 
 
+        // Magnitude rendering
         float refSize = 1f;
         float inc = 1.3f;
         float baselog = 2f;
@@ -675,41 +744,71 @@ public class SolarSystemCalculations : MonoBehaviour {
         neptuneSha.localScale = new Vector3(delta * refSize, delta * refSize);
 
 
-        
-
-
         // Elongation
-        Color color = moonSha.GetComponent<Renderer>().material.color;
-        float denom = 90;
-        color.a = (float)(1 - moon.elon / 90);
+        float denom = 90.0f;
+        float h;
+        float s;
+        float v;
+        Color color = mercuryTr.GetComponent<Renderer>().material.color;
+        Color.RGBToHSV(color, out h, out s, out v);
+        mercuryTr.GetComponent<Renderer>().material.color = Color.HSVToRGB(h, s,(float) (mercury.elon /denom) * 255);
+
+        color = venusTr.GetComponent<Renderer>().material.color;
+        Color.RGBToHSV(color, out h, out s, out v);
+        venusTr.GetComponent<Renderer>().material.color = Color.HSVToRGB(h, s, (float)(venus.elon / denom));
+        //(float)(venus.elon / denom) * 255
+
+        color = marsTr.GetComponent<Renderer>().material.color;
+        Color.RGBToHSV(color, out h, out s, out v);
+        marsTr.GetComponent<Renderer>().material.color = Color.HSVToRGB(h, s, (float)(mars.elon / denom));
+
+        color = jupiterTr.GetComponent<Renderer>().material.color;
+        Color.RGBToHSV(color, out h, out s, out v);
+        jupiterTr.GetComponent<Renderer>().material.color = Color.HSVToRGB(h, s, (float)(jupiter.elon / denom));
+
+        color = saturnTr.GetComponent<Renderer>().material.color;
+        Color.RGBToHSV(color, out h, out s, out v);
+        saturnTr.GetComponent<Renderer>().material.color = Color.HSVToRGB(h, s, (float)(saturn.elon / denom));
+
+        color = uranusTr.GetComponent<Renderer>().material.color;
+        Color.RGBToHSV(color, out h, out s, out v);
+        uranusTr.GetComponent<Renderer>().material.color = Color.HSVToRGB(h, s, (float)(uranus.elon / denom));
+
+        color = neptuneTr.GetComponent<Renderer>().material.color;
+        Color.RGBToHSV(color, out h, out s, out v);
+        neptuneTr.GetComponent<Renderer>().material.color = Color.HSVToRGB(h, s, (float)(neptune.elon / denom));
+
+
+        color = moonSha.GetComponent<Renderer>().material.color;
+        color.a = (float)(1 - moon.elon / denom);
         moonSha.GetComponent<Renderer>().material.color = color;
 
         color = mercurySha.GetComponent<Renderer>().material.color;
-        color.a = (float) (mercury.elon / 90);
+        color.a = (float) (mercury.elon / denom);
         mercurySha.GetComponent<Renderer>().material.color = color;
 
         color = venusSha.GetComponent<Renderer>().material.color;
-        color.a = (float)(venus.elon / 90);
+        color.a = (float)(venus.elon / denom);
         venusSha.GetComponent<Renderer>().material.color = color;
 
         color = marsSha.GetComponent<Renderer>().material.color;
-        color.a = (float)(mars.elon / 90);
+        color.a = (float)(mars.elon / denom);
         marsSha.GetComponent<Renderer>().material.color = color;
 
         color = jupiterSha.GetComponent<Renderer>().material.color;
-        color.a = (float)(jupiter.elon / 90);
+        color.a = (float)(jupiter.elon / denom);
         jupiterSha.GetComponent<Renderer>().material.color = color;
 
         color = saturnSha.GetComponent<Renderer>().material.color;
-        color.a = (float)(saturn.elon / 90);
+        color.a = (float)(saturn.elon / denom);
         saturnSha.GetComponent<Renderer>().material.color = color;
 
         color = uranusSha.GetComponent<Renderer>().material.color;
-        color.a = (float)(uranus.elon / 90);
+        color.a = (float)(uranus.elon / denom);
         uranusSha.GetComponent<Renderer>().material.color = color;
 
         color = neptuneSha.GetComponent<Renderer>().material.color;
-        color.a = (float)(neptune.elon / 90);
+        color.a = (float)(neptune.elon / denom);
         neptuneSha.GetComponent<Renderer>().material.color = color;
         
 
@@ -945,7 +1044,10 @@ public class SolarSystemCalculations : MonoBehaviour {
     void Update()
     {
         currentTimeTxt.text = currentTime.Day + "/" + currentTime.Month + "/" + currentTime.Year + "  " + currentTime.Hour.ToString("D2") + ":" + currentTime.Minute.ToString("D2");
-        
+       //northTxt.text = (Input.location.status == LocationServiceStatus.Running).ToString();
+
+        southTxt.text = Rev(Input.compass.trueHeading - 180).ToString("F0");
+       
 
         if (topocentric)
         {
