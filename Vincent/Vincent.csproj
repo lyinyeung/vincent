@@ -117,6 +117,7 @@
     <Compile Include="Assets\Scripts\SwitchBGmode.cs" />
     <Compile Include="Assets\Scripts\TouchCam.cs" />
     <Compile Include="Assets\Scripts\TouchMode.cs" />
+    <Compile Include="Assets\Scripts\WebCam.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Databases\ExampleCSV.txt" />
